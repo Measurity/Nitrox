@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -15,6 +16,15 @@ namespace NitroxModel.Helper
         private const string PREFERRED_GAMEPATH_REGKEY = @"SOFTWARE\Nitrox\PreferredGamePath";
         private static string launcherPath;
         private static string gamePath;
+        private static LinuxConfig _linuxConfig;
+        public static LinuxConfig linuxConfig {
+            get {
+                if (_linuxConfig == null) {
+                    _linuxConfig = LinuxConfig.Load();
+                }
+                return _linuxConfig;
+            }
+        }
 
         private static readonly IEnumerable<Func<string>> launcherPathDataSources = new List<Func<string>>
         {
@@ -59,8 +69,22 @@ namespace NitroxModel.Helper
 
         public static string PreferredGamePath
         {
-            get => RegistryEx.Read<string>(PREFERRED_GAMEPATH_REGKEY);
-            set => RegistryEx.Write(PREFERRED_GAMEPATH_REGKEY, value);
+            get {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    return RegistryEx.Read<string>(PREFERRED_GAMEPATH_REGKEY);
+                } else {
+                    return linuxConfig.SubnauticaGamePath;
+                }
+                
+            }
+            set {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                    RegistryEx.Write(PREFERRED_GAMEPATH_REGKEY, value);
+                } else {
+                    linuxConfig.SubnauticaGamePath = value;
+                    linuxConfig.Save();
+                }
+            }
         }
 
         public static IGamePlatform GamePlatform { get; private set; }
