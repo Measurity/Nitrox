@@ -1,6 +1,9 @@
 <Project>
     <!-- Set default properties for all projects (can be overridden per project) -->
     <PropertyGroup>
+        <!-- Fix for dotnet build CLI -->
+        <!-- MSBuildThisFileDirectory refers to the folder where Directory.Build.props is defined -->
+        <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
         <LangVersion>11</LangVersion>
         <Version>1.7.0.0</Version>
         <NitroxProject>false</NitroxProject>
