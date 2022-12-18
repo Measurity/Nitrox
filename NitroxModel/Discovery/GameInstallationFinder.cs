@@ -33,15 +33,15 @@ namespace NitroxModel.Discovery
             foreach (IFindGameInstallation finder in finders)
             {
                 string path = finder.FindGame(errors);
-                if (path == null)
+                if (String.IsNullOrEmpty(path))
                 {
                     continue;
                 }
 
                 errors.Clear();
+                Log.Info($"Found game using {finder.GetType().Name} with path {path}");
                 return Path.GetFullPath(path);
             }
-
             return null;
         }
 
