@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>$(NitroxNetCoreVersion)</TargetFramework>
         <!-- These should be set by the user, depending on what you want to build -->
         <!-- TODO: move into a config or test by BuildTool output -->
         <BuildSubnautica>True</BuildSubnautica>
