@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 
@@ -16,7 +17,13 @@ public class AssetsBundleManager : AssetsManager
         this.aaRootPath = aaRootPath;
     }
 
-    public string CleanBundlePath(string bundlePath) => aaRootPath + bundlePath.Substring(bundlePath.IndexOf('}') + 1);
+    public string CleanBundlePath(string bundlePath) {
+        //TODO: does this cause a big performance penalty?
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            bundlePath = bundlePath.Replace('\\', '/');
+        }
+        return aaRootPath + bundlePath.Substring(bundlePath.IndexOf('}') + 1);
+    }
 
     public AssetsFileInstance LoadBundleWithDependencies(string[] bundlePaths)
     {
