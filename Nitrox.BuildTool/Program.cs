@@ -33,7 +33,7 @@ namespace Nitrox.BuildTool
 
                 Exit((eventArgs.ExceptionObject as Exception)?.HResult ?? 1);
             };
-            Log.Setup(false, null, false, true);
+            Log.Setup(false, null, true, true, false);
 
             GameInstallData game = await Task.Factory.StartNew(EnsureGame).ConfigureAwait(false);
             Console.WriteLine($"Found game at {game.InstallDir}");

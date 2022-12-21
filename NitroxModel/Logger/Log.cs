@@ -29,7 +29,7 @@ namespace NitroxModel.Logger
 
         public static string GetMostRecentLogFile() => new DirectoryInfo(LogDirectory).GetFiles().OrderByDescending(f => f.CreationTimeUtc).FirstOrDefault()?.FullName;
 
-        public static void Setup(bool asyncConsoleWriter = false, InGameLogger inGameLogger = null, bool isConsoleApp = false, bool useConsoleLogging = true)
+        public static void Setup(bool asyncConsoleWriter = false, InGameLogger inGameLogger = null, bool isConsoleApp = false, bool useConsoleLogging = true, bool useFileLogging = true)
         {
             if (isSetup)
             {
@@ -62,19 +62,24 @@ namespace NitroxModel.Logger
                              cnf.WriteTo.ColoredConsole(outputTemplate: consoleTemplate);
                          }
                      })
-                     .WriteTo.Logger(cnf => cnf
-                                            .Enrich.FromLogContext()
-                                            .WriteTo
+                     .WriteTo.Logger(cnf => {
+                        if (!useFileLogging) {
+                            return;
+                        }
+                        
+                         cnf.Enrich.FromLogContext()
+                                          .WriteTo
 #if DEBUG
-                                            .Map(nameof(PlayerName), "", (playerName, sinkCnf) => sinkCnf.Async(a => a.File(Path.Combine(LogDirectory, $"{GetLogFileName()}{playerName}-.log"),
+                                          .Map(nameof(PlayerName), "", (playerName, sinkCnf) => sinkCnf.Async(a => a.File(Path.Combine(LogDirectory, $"{GetLogFileName()}{playerName}-.log"),
 #else
                                             .Async((a => a.File(Path.Combine(LogDirectory, $"{GetLogFileName()}-.log"),
 #endif
-                                                                                                                            outputTemplate: "[{Timestamp:HH:mm:ss.fff}] [{Level:u3}{IsUnity}] {Message}{NewLine}{Exception}",
-                                                                                                                            rollingInterval: RollingInterval.Day,
-                                                                                                                            retainedFileCountLimit: 10,
-                                                                                                                            fileSizeLimitBytes: 200000000, // 200MB
-                                                                                                                            shared: true))))
+                                                                                                                          outputTemplate: "[{Timestamp:HH:mm:ss.fff}] [{Level:u3}{IsUnity}] {Message}{NewLine}{Exception}",
+                                                                                                                          rollingInterval: RollingInterval.Day,
+                                                                                                                          retainedFileCountLimit: 10,
+                                                                                                                          fileSizeLimitBytes: 200000000, // 200MB
+                                                                                                                          shared: true)));
+                     })
                      .WriteTo.Logger(cnf =>
                      {
                          if (inGameLogger == null)
