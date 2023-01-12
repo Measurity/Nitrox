@@ -5,7 +5,7 @@ using NitroxModel.Serialization;
 namespace NitroxModel.Helper
 {
     /// <summary>
-    /// Config for Linux platforms. Linux does not use 
+    /// Config for Linux platforms. Linux does not use the registry.
     /// </summary>
     public class LinuxConfig : NitroxConfig<LinuxConfig>
     {
