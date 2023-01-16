@@ -1,12 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>$(NitroxNetCoreVersion)</TargetFramework>
-        <!-- These should be set by the user, depending on what you want to build -->
-        <!-- TODO: move into a config or test by BuildTool output -->
-        <BuildSubnautica>True</BuildSubnautica>
-        
-        <AvaloniaVersion>0.10.18</AvaloniaVersion>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
         <TrimMode>copyused</TrimMode>
@@ -28,11 +23,11 @@
         <TrimmableAssembly Include="Avalonia.Themes.Default" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-        <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+        <PackageReference Include="Avalonia" Version="0.10.18" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.18" />
         <PackageReference Include="Markdown.Avalonia" Version="0.10.12" />
         <PackageReference Include="ReactiveUI.Validation" Version="3.0.1" />
         <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
@@ -40,48 +35,4 @@
     <ItemGroup>
         <UpToDateCheckInput Remove="Assets\Images\**" />
     </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\NitroxModel\NitroxModel.csproj" />
-        <ProjectReference Include="..\NitroxServer\NitroxServer.csproj" />
-        <ProjectReference Condition="$(BuildSubnautica)==true" Include="..\NitroxServer-Subnautica\NitroxServer-Subnautica.csproj" />
-    </ItemGroup>
-
-    <Target Name="BuildSubnautica" AfterTargets="Build" Condition="$(BuildSubnautica)==True">
-        <ItemGroup>
-            <ProjectToBuildSN Include="..\NitroxModel\NitroxModel.csproj">
-                <AdditionalProperties>TargetFramework=net472</AdditionalProperties>
-            </ProjectToBuildSN>
-            <ProjectToBuildSN Include="..\NitroxModel-Subnautica\NitroxModel-Subnautica.csproj">
-
-            </ProjectToBuildSN>
-            <ProjectToBuildSN Include="..\NitroxClient\NitroxClient.csproj">
-
-            </ProjectToBuildSN>
-            <ProjectToBuildSN Include="..\NitroxPatcher\NitroxPatcher.csproj">
-
-            </ProjectToBuildSN>
-        </ItemGroup>
-        
-        <!-- Builds the Nitrox Clientside libraries for Subnautica -->
-        <!-- OutputPath | Sets the output path to lib -->
-        <!-- SatelliteResourceLanguages | Gets rid of useless localization folders in lib -->
-        <MSBuild
-            Projects="@(ProjectToBuildSN)"
-            Properties="OutputPath=$(TargetDir)\lib;SatelliteResourceLanguages=en">
-        </MSBuild>
-        
-        <ItemGroup>
-            <NitroxSubnauticaAssets Include="..\Nitrox.Assets.Subnautica\AssetBundles\**\*." />
-        </ItemGroup>
-        <ItemGroup>
-            <NitroxSubnauticaStaticDlls Include="..\Nitrox.Assets.Subnautica\**\*.dll" />
-        </ItemGroup>
-        <ItemGroup>
-            <NitroxSubnauticaLanguageFiles Include="..\Nitrox.Assets.Subnautica\LanguageFiles\*.json" />
-        </ItemGroup>
-        <Copy SourceFiles="@(NitroxSubnauticaAssets)" DestinationFolder="$(TargetDir)\AssetBundles\%(RecursiveDir)" />
-        <Copy SourceFiles="@(NitroxSubnauticaStaticDlls)" DestinationFolder="$(TargetDir)\lib\%(RecursiveDir)" />
-        <Copy SourceFiles="@(NitroxSubnauticaLanguageFiles)" DestinationFolder="$(TargetDir)\LanguageFiles\%(RecursiveDir)" />
-    </Target>
 </Project>

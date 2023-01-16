@@ -4,8 +4,6 @@
         <!-- Fix for dotnet build CLI -->
         <!-- MSBuildThisFileDirectory refers to the folder where Directory.Build.props is defined -->
         <NitroxRootDir>$(MSBuildThisFileDirectory)</NitroxRootDir>
-        <!-- What version of .NET Core to use for building certain projects -->
-        <NitroxNetCoreVersion>net6.0</NitroxNetCoreVersion>
         <LangVersion>11</LangVersion>
         <Version>1.7.0.0</Version>
         <NitroxProject>false</NitroxProject>
