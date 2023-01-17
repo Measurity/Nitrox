@@ -1,0 +1,14 @@
+{
+    // allows the c# extension to use .editorconfig
+    "omnisharp.enableEditorConfigSupport": true,
+    // allows the c# extension to use Microsoft and Nitrox.Analyzers.
+    "omnisharp.enableRoslynAnalyzers": true,
+    // don't run the analyzer on all documents (very slow)
+    "omnisharp.analyzeOpenDocumentsOnly": true,
+    // should "name can be simplified" type messages be listed in the problems tab
+    "csharp.suppressHiddenDiagnostics": false,
+    // allows imports to be auto-completed like in VS
+    "omnisharp.enableImportCompletion": true,
+    // when format is ran, allow imports to be organized
+    "omnisharp.organizeImportsOnFormat": true
+}

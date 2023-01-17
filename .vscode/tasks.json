@@ -1,4 +1,6 @@
 {
+    // contains tasks that can be run
+    // partially auto-generated file
     "version": "2.0.0",
     "tasks": [
         {

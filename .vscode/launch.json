@@ -1,4 +1,6 @@
 {
+    // launch.json is a partially auto-generated file
+    // I have copy-and-pasted the launch configurations for all the projects Nitrox has (that can be debugged)
     "version": "0.2.0",
     "configurations": [
         {
