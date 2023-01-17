@@ -60,14 +60,8 @@ namespace NitroxModel.Helper
 
         public static string PreferredGamePath
         {
-            get
-            {
-                return KeyValueStore.GetValue<string>(PREFERRED_GAMEPATH_KEY, null);
-            }
-            set
-            {
-                KeyValueStore.SetValue<string>(PREFERRED_GAMEPATH_KEY, value);
-            }
+            get => KeyValueStore.Instance.GetValue<string>(PREFERRED_GAMEPATH_KEY, null);
+            set => KeyValueStore.Instance.SetValue(PREFERRED_GAMEPATH_KEY, value);
         }
 
         public static IGamePlatform GamePlatform { get; private set; }
