@@ -125,6 +125,29 @@ namespace NitroxModel.Platforms.OS.Windows.Internal
                 baseKey.Dispose();
             }
         }
+        /// <summary>
+        ///     Checks if a key exists.
+        /// </summary>
+        public static bool Exists(string pathWithValue)
+        {
+            (RegistryKey baseKey, string valueKey) = GetKey(pathWithValue, false);
+            if (baseKey == null)
+            {
+                baseKey.Dispose();
+                return false;
+            }
+            else
+            {
+                object value = baseKey.GetValue(valueKey);
+                if (value == null)
+                {
+                    baseKey.Dispose();
+                    return false;
+                }
+            }
+            baseKey.Dispose();
+            return true;
+        }
 
         /// <summary>
         ///     Waits for a registry value to have the given value.
