@@ -22,6 +22,7 @@ namespace NitroxModel.Helper;
 /// </remarks>
 public class KeyValueStore : IKeyValueStore
 {
+    private static IKeyValueStore instance;
     public static IKeyValueStore Instance { get; } = GetKeyValueStoreForPlatform();
 
     private KeyValueStore()
@@ -38,14 +39,20 @@ public class KeyValueStore : IKeyValueStore
 
     private static IKeyValueStore GetKeyValueStoreForPlatform()
     {
+        if (instance != null) 
+        {
+            return instance;
+        }
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             // Use registry on Windows
-            return new RegistryKeyValueStore();
+            instance = new RegistryKeyValueStore();
         }
 
         // if platform isn't Windows, it doesn't have a registry
         // use a config file for storage this should work on most platforms
-        return new ConfigFileKeyValueStore();
+        instance = new ConfigFileKeyValueStore();
+        return instance;
     }
 }
