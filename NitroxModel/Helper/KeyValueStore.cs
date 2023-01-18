@@ -20,39 +20,20 @@ namespace NitroxModel.Helper;
 ///         If you want to view/edit the KeyStore, open $HOME/.config/Nitrox/nitrox.cfg in your favourite text editor.
 ///     </para>
 /// </remarks>
-public class KeyValueStore : IKeyValueStore
+public static class KeyValueStore
 {
-    private static IKeyValueStore instance;
     public static IKeyValueStore Instance { get; } = GetKeyValueStoreForPlatform();
-
-    private KeyValueStore()
-    {
-    }
-
-    public T GetValue<T>(string key, T defaultValue = default) => throw new NotSupportedException();
-
-    public bool SetValue<T>(string key, T value) => throw new NotSupportedException();
-
-    public bool DeleteKey(string key) => throw new NotSupportedException();
-
-    public bool KeyExists(string key) => throw new NotSupportedException();
 
     private static IKeyValueStore GetKeyValueStoreForPlatform()
     {
-        if (instance != null) 
-        {
-            return instance;
-        }
-
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             // Use registry on Windows
-            instance = new RegistryKeyValueStore();
+            return new RegistryKeyValueStore();
         }
 
         // if platform isn't Windows, it doesn't have a registry
         // use a config file for storage this should work on most platforms
-        instance = new ConfigFileKeyValueStore();
-        return instance;
+        return new ConfigFileKeyValueStore();
     }
 }
