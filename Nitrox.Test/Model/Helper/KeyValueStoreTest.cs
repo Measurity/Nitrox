@@ -19,5 +19,6 @@ public class KeyValueStoreTest
         // Cleanup
         KeyValueStore.Instance.DeleteKey(TEST_KEY);
         Assert.IsNull(KeyValueStore.Instance.GetValue<int?>(TEST_KEY));
+        Assert.IsFalse(KeyValueStore.Instance.KeyExists(TEST_KEY));
     }
 }

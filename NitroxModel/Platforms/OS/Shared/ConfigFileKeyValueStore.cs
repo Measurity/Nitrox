@@ -37,11 +37,7 @@ public class ConfigFileKeyValueStore : IKeyValueStore
 
     public T GetValue<T>(string key, T defaultValue)
     {
-        if (!hasLoaded)
-        {
-            LoadConfig();
-        }
-
+        TryLoadConfig();
         bool succeeded = keyValuePairs.TryGetValue(key, out object obj);
         if (!succeeded)
         {
@@ -72,41 +68,56 @@ public class ConfigFileKeyValueStore : IKeyValueStore
 
     public bool SetValue<T>(string key, T value)
     {
+        TryLoadConfig();
         keyValuePairs[key] = value;
-        SaveConfig();
+        TrySaveConfig();
         return true;
     }
 
-    private void SaveConfig()
+    public (bool success, Exception error) TrySaveConfig()
     {
-        // Create directories if they don't already exist
-        Directory.CreateDirectory(FolderPath);
+        // saving configs isn't critical, if it fails the values will still exists at runtime, but won't be loaded the next time you start up Nitrox.
+        try {
+            // Create directories if they don't already exist
+            Directory.CreateDirectory(FolderPath);
 
-        string serialized = JsonSerializer.Serialize(keyValuePairs, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(FilePath, serialized);
+            // serialize the keyValuePairs
+            string serialized = JsonSerializer.Serialize(keyValuePairs, new JsonSerializerOptions { WriteIndented = true });
+            
+            // try to write the file
+            File.WriteAllText(FilePath, serialized);
+            return (true, null);
+        } catch (Exception e) {
+            return (false, e);
+        }
     }
 
-    public bool LoadConfig()
+    private (bool success, Exception error) TryLoadConfig()
     {
-        Dictionary<string, string> deserialized;
+        if (hasLoaded)
+        {
+            return (true, null);
+        }
+        Dictionary<string, object> deserialized;
         try
         {
-            deserialized = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(FilePath));
+            deserialized = JsonSerializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(FilePath));
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            return false;
+            return (false, e);
         }
         if (deserialized == null)
         {
-            return false;
+            return (false, new Exception("Deserialized object was null"));
         }
 
-        foreach (KeyValuePair<string, string> item in deserialized)
+        foreach (KeyValuePair<string, object> item in deserialized)
         {
-            keyValuePairs.Add(item.Key, item.Value);
+            keyValuePairs[item.Key] = item.Value;
         }
-        return true;
+        hasLoaded = true;
+        return (true, null);
     }
 
     public bool DeleteKey(string key)
@@ -115,7 +126,7 @@ public class ConfigFileKeyValueStore : IKeyValueStore
         {
             return false;
         }
-        SaveConfig();
+        TrySaveConfig();
         return true;
     }
 
