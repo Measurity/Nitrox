@@ -77,7 +77,8 @@ public class ConfigFileKeyValueStore : IKeyValueStore
     public (bool success, Exception error) TrySaveConfig()
     {
         // saving configs isn't critical, if it fails the values will still exists at runtime, but won't be loaded the next time you start up Nitrox.
-        try {
+        try 
+        {
             // Create directories if they don't already exist
             Directory.CreateDirectory(FolderPath);
 
@@ -87,7 +88,9 @@ public class ConfigFileKeyValueStore : IKeyValueStore
             // try to write the file
             File.WriteAllText(FilePath, serialized);
             return (true, null);
-        } catch (Exception e) {
+        }
+        catch (Exception e) 
+        {
             return (false, e);
         }
     }
