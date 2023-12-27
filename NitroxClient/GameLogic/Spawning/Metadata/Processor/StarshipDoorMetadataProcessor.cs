@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class StarshipDoorMetadataProcessor : EntityMetadataProcessor<StarshipDoorMetadata>
+public class StarshipDoorMetadataProcessor : IEntityMetadataProcessor<StarshipDoorMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, StarshipDoorMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, StarshipDoorMetadata metadata)
     {
         StarshipDoor starshipDoor = gameObject.GetComponent<StarshipDoor>();
         starshipDoor.doorOpen = metadata.DoorOpen;

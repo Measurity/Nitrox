@@ -127,11 +127,6 @@ namespace NitroxClient
                             .As<IEntityMetadataExtractor>()
                             .AsSelf()
                             .SingleInstance();
-            containerBuilder.RegisterAssemblyTypes(currentAssembly)
-                            .AssignableTo<IEntityMetadataProcessor>()
-                            .As<IEntityMetadataProcessor>()
-                            .AsSelf()
-                            .SingleInstance();
             containerBuilder.RegisterType<EntityMetadataManager>().InstancePerLifetimeScope();
         }
 

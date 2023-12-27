@@ -8,18 +8,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class CyclopsMetadataProcessor : EntityMetadataProcessor<CyclopsMetadata>
+public record CyclopsMetadataProcessor(LiveMixinManager LiveMixinManager) : IEntityMetadataProcessor<CyclopsMetadata>
 {
-    private readonly IPacketSender packetSender;
-    private readonly LiveMixinManager liveMixinManager;
-
-    public CyclopsMetadataProcessor(IPacketSender packetSender, LiveMixinManager liveMixinManager)
-    {
-        this.packetSender = packetSender;
-        this.liveMixinManager = liveMixinManager;
-    }
-
-    public override void ProcessMetadata(GameObject cyclops, CyclopsMetadata metadata)
+    public void ProcessMetadata(GameObject cyclops, CyclopsMetadata metadata)
     {
         using (PacketSuppressor<EntityMetadataUpdate>.Suppress())
         {
@@ -144,6 +135,6 @@ public class CyclopsMetadataProcessor : EntityMetadataProcessor<CyclopsMetadata>
     private void SetHealth(GameObject gameObject, float health)
     {
         LiveMixin liveMixin = gameObject.RequireComponentInChildren<LiveMixin>(true);
-        liveMixinManager.SyncRemoteHealth(liveMixin, health);
+        LiveMixinManager.SyncRemoteHealth(liveMixin, health);
     }
 }

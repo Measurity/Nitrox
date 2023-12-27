@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class RepairedComponentMetadataProcessor : EntityMetadataProcessor<RepairedComponentMetadata>
+public class RepairedComponentMetadataProcessor : IEntityMetadataProcessor<RepairedComponentMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, RepairedComponentMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, RepairedComponentMetadata metadata)
     {
         Radio radio = gameObject.GetComponent<Radio>();
 

@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class PlantableMetadataProcessor : EntityMetadataProcessor<PlantableMetadata>
+public class PlantableMetadataProcessor : IEntityMetadataProcessor<PlantableMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, PlantableMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, PlantableMetadata metadata)
     {
         Plantable plantable = gameObject.GetComponent<Plantable>();
 

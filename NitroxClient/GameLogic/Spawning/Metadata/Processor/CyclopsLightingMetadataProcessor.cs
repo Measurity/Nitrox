@@ -8,16 +8,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class CyclopsLightingMetadataProcessor : EntityMetadataProcessor<CyclopsLightingMetadata>
+public class CyclopsLightingMetadataProcessor : IEntityMetadataProcessor<CyclopsLightingMetadata>
 {
-    private readonly IPacketSender packetSender;
-
-    public CyclopsLightingMetadataProcessor(IPacketSender packetSender)
-    {
-        this.packetSender = packetSender;
-    }
-
-    public override void ProcessMetadata(GameObject gameObject, CyclopsLightingMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, CyclopsLightingMetadata metadata)
     {
         CyclopsLightingPanel lighting = gameObject.RequireComponentInChildren<CyclopsLightingPanel>(true);
 

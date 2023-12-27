@@ -10,7 +10,7 @@ using static Rocket;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class RocketMetadataProcessor : EntityMetadataProcessor<RocketMetadata>
+public class RocketMetadataProcessor : IEntityMetadataProcessor<RocketMetadata>
 {
     // For newly connected players, we will only build the previous stage with construction bots for a certain time period.
     private const float MAX_ALLOWABLE_TIME_FOR_CONSTRUCTOR_BOTS = 10;
@@ -23,7 +23,7 @@ public class RocketMetadataProcessor : EntityMetadataProcessor<RocketMetadata>
      * 4 : Cockpit
      * 5 : Final rocket
      **/
-    public override void ProcessMetadata(GameObject gameObject, RocketMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, RocketMetadata metadata)
     {
         Rocket rocket = gameObject.GetComponent<Rocket>();
 

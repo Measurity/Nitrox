@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class IncubatorMetadataProcessor : EntityMetadataProcessor<IncubatorMetadata>
+public class IncubatorMetadataProcessor : IEntityMetadataProcessor<IncubatorMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, IncubatorMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, IncubatorMetadata metadata)
     {
         if (metadata.Powered)
         {

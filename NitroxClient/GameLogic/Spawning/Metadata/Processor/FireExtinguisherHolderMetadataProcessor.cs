@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class FireExtinguisherHolderMetadataProcessor : EntityMetadataProcessor<FireExtinguisherHolderMetadata>
+public class FireExtinguisherHolderMetadataProcessor : IEntityMetadataProcessor<FireExtinguisherHolderMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, FireExtinguisherHolderMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, FireExtinguisherHolderMetadata metadata)
     {
         FireExtinguisherHolder holder = gameObject.GetComponent<FireExtinguisherHolder>();
 

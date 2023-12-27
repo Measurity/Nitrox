@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class CrafterMetadataProcessor : EntityMetadataProcessor<CrafterMetadata>
+public class CrafterMetadataProcessor : IEntityMetadataProcessor<CrafterMetadata>
 {
     // small increase to prevent this player from swiping item from remote player
     public const float ANTI_GRIEF_DURATION_BUFFER = 0.2f;
 
-    public override void ProcessMetadata(GameObject gameObject, CrafterMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, CrafterMetadata metadata)
     {
         if (metadata.TechType == null)
         {

@@ -10,9 +10,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class SubNameInputMetadataProcessor : EntityMetadataProcessor<SubNameInputMetadata>
+public class SubNameInputMetadataProcessor : IEntityMetadataProcessor<SubNameInputMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, SubNameInputMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, SubNameInputMetadata metadata)
     {
         if (!gameObject.TryGetComponent(out SubNameInput subNameInput))
         {

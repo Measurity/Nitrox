@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class WeldableWallPanelGenericMetadataProcessor : EntityMetadataProcessor<WeldableWallPanelGenericMetadata>
+public class WeldableWallPanelGenericMetadataProcessor : IEntityMetadataProcessor<WeldableWallPanelGenericMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, WeldableWallPanelGenericMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, WeldableWallPanelGenericMetadata metadata)
     {
         WeldableWallPanelGeneric weldableWallPanelGeneric = gameObject.GetComponent<WeldableWallPanelGeneric>();
         weldableWallPanelGeneric.liveMixin.health = metadata.LiveMixInHealth;

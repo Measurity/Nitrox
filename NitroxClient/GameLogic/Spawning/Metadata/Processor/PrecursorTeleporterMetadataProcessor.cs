@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class PrecursorTeleporterMetadataProcessor : EntityMetadataProcessor<PrecursorTeleporterMetadata>
+public class PrecursorTeleporterMetadataProcessor : IEntityMetadataProcessor<PrecursorTeleporterMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, PrecursorTeleporterMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, PrecursorTeleporterMetadata metadata)
     {
         Log.Debug($"Received precursor teleporter metadata change for {gameObject.name} with data of {metadata}");
 

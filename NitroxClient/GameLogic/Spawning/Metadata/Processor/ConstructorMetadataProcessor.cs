@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class ConstructorMetadataProcessor : EntityMetadataProcessor<ConstructorMetadata>
+public class ConstructorMetadataProcessor : IEntityMetadataProcessor<ConstructorMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, ConstructorMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, ConstructorMetadata metadata)
     {
         Constructor constructor = gameObject.GetComponent<Constructor>();
 

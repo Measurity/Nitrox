@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class BatteryMetadataProcessor : EntityMetadataProcessor<BatteryMetadata>
+public class BatteryMetadataProcessor : IEntityMetadataProcessor<BatteryMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, BatteryMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, BatteryMetadata metadata)
     {
         Battery battery = gameObject.GetComponent<Battery>();
 

@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class SealedDoorMetadataProcessor : EntityMetadataProcessor<SealedDoorMetadata>
+public class SealedDoorMetadataProcessor : IEntityMetadataProcessor<SealedDoorMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, SealedDoorMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, SealedDoorMetadata metadata)
     {
         Log.Info($"Received door metadata change for {gameObject.name} with data of {metadata}");
 

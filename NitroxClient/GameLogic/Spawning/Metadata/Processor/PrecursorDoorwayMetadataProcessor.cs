@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class PrecursorDoorwayMetadataProcessor : EntityMetadataProcessor<PrecursorDoorwayMetadata>
+public class PrecursorDoorwayMetadataProcessor : IEntityMetadataProcessor<PrecursorDoorwayMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, PrecursorDoorwayMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, PrecursorDoorwayMetadata metadata)
     {
         Log.Info($"Received precursor door metadata change for {gameObject.name} with data of {metadata}");
 

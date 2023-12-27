@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class FlashlightMetadataProcessor : EntityMetadataProcessor<FlashlightMetadata>
+public class FlashlightMetadataProcessor : IEntityMetadataProcessor<FlashlightMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, FlashlightMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, FlashlightMetadata metadata)
     {
         FlashLight flashLight = gameObject.GetComponent<FlashLight>();
 

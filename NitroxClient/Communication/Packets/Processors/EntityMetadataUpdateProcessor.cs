@@ -2,6 +2,7 @@ using NitroxClient.Communication.Packets.Processors.Abstract;
 using NitroxClient.GameLogic.Spawning.Metadata;
 using NitroxClient.GameLogic.Spawning.Metadata.Processor.Abstract;
 using NitroxClient.MonoBehaviours;
+using NitroxModel.DataStructures.GameLogic.Entities.Metadata;
 using NitroxModel.DataStructures.Util;
 using NitroxModel.Helper;
 using NitroxModel.Packets;
@@ -22,7 +23,7 @@ public class EntityMetadataUpdateProcessor : ClientPacketProcessor<EntityMetadat
     {
         GameObject gameObject = NitroxEntity.RequireObjectFrom(update.Id);
 
-        Optional<IEntityMetadataProcessor> metadataProcessor = entityMetadataManager.FromMetaData(update.NewValue);
+        Optional<IEntityMetadataProcessor<EntityMetadata>> metadataProcessor = entityMetadataManager.FromMetaData(update.NewValue);
         Validate.IsTrue(metadataProcessor.HasValue, $"No processor found for EntityMetadata of type {update.NewValue.GetType()}");
 
         metadataProcessor.Value.ProcessMetadata(gameObject, update.NewValue);

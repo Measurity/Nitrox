@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor.Abstract;
 
-public interface IEntityMetadataProcessor
+public interface IEntityMetadataProcessor<TMetadata> where TMetadata : EntityMetadata
 {
-    public abstract void ProcessMetadata(GameObject gameObject, EntityMetadata metadata);
+    void ProcessMetadata(GameObject gameObject, TMetadata metadata);
 }

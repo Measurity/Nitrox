@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NitroxClient.GameLogic.Spawning.Metadata.Extractor.Abstract;
 using NitroxClient.GameLogic.Spawning.Metadata.Processor.Abstract;
+using NitroxModel.Core;
 using NitroxModel.DataStructures.GameLogic.Entities.Metadata;
 using NitroxModel.DataStructures.Util;
+using NitroxModel.Helper;
 using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata;
@@ -12,12 +15,12 @@ namespace NitroxClient.GameLogic.Spawning.Metadata;
 public class EntityMetadataManager
 {
     private readonly Dictionary<Type, IEntityMetadataExtractor> extractors;
-    private readonly Dictionary<Type, IEntityMetadataProcessor> processors;
+    private readonly TypeLookup<IEntityMetadataProcessor<EntityMetadata>> processors;
 
-    public EntityMetadataManager(IEnumerable<IEntityMetadataExtractor> extractors, IEnumerable<IEntityMetadataProcessor> processors)
+    public EntityMetadataManager(IEnumerable<IEntityMetadataExtractor> extractors)
     {
         this.extractors = extractors.ToDictionary(p => p.GetType().BaseType.GetGenericArguments()[0]);
-        this.processors = processors.ToDictionary(p => p.GetType().BaseType.GetGenericArguments()[0]);
+        processors = TypeLookup<IEntityMetadataProcessor<EntityMetadata>>.Create<MetadataProcessorWrapper<EntityMetadata>>(Assembly.GetExecutingAssembly().GetTypes(), NitroxServiceLocator.LocateService);
     }
 
     public Optional<EntityMetadata> Extract(object o)
@@ -43,9 +46,9 @@ public class EntityMetadataManager
         return Optional.Empty;
     }
 
-    public Optional<IEntityMetadataProcessor> FromMetaData(EntityMetadata metadata)
+    public Optional<IEntityMetadataProcessor<EntityMetadata>> FromMetaData(EntityMetadata metadata)
     {
-        if (metadata != null && processors.TryGetValue(metadata.GetType(), out IEntityMetadataProcessor processor))
+        if (metadata != null && processors.TryGetValue(metadata.GetType(), out IEntityMetadataProcessor<EntityMetadata> processor))
         {
             return Optional.Of(processor);
         }
@@ -55,11 +58,19 @@ public class EntityMetadataManager
 
     public void ApplyMetadata(GameObject gameObject, EntityMetadata metadata)
     {
-        Optional<IEntityMetadataProcessor> metadataProcessor = FromMetaData(metadata);
+        Optional<IEntityMetadataProcessor<EntityMetadata>> metadataProcessor = FromMetaData(metadata);
 
         if (metadataProcessor.HasValue)
         {
             metadataProcessor.Value.ProcessMetadata(gameObject, metadata);
+        }
+    }
+
+    private record MetadataProcessorWrapper<T>(IEntityMetadataProcessor<T> Inner) : IEntityMetadataProcessor<EntityMetadata> where T : EntityMetadata
+    {
+        public void ProcessMetadata(GameObject gameObject, EntityMetadata metadata)
+        {
+            Inner.ProcessMetadata(gameObject, (T)metadata);
         }
     }
 }

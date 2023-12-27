@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata;
 
-public class FlareMetadataProcessor : EntityMetadataProcessor<FlareMetadata>
+public class FlareMetadataProcessor : IEntityMetadataProcessor<FlareMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, FlareMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, FlareMetadata metadata)
     {
         if (!gameObject.TryGetComponent(out Flare flare))
         {

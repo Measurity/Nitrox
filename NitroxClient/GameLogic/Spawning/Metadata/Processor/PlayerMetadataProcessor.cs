@@ -11,10 +11,10 @@ using static NitroxModel.DataStructures.GameLogic.Entities.Metadata.PlayerMetada
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class PlayerMetadataProcessor : EntityMetadataProcessor<PlayerMetadata>
+public class PlayerMetadataProcessor : IEntityMetadataProcessor<PlayerMetadata>
 {
     private NitroxId localPlayerId = null;
-    public override void ProcessMetadata(GameObject gameObject, PlayerMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, PlayerMetadata metadata)
     {
         if (!gameObject.TryGetIdOrWarn(out NitroxId id))
         {

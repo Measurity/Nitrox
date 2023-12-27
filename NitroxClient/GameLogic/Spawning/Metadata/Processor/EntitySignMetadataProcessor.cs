@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class EntitySignMetadataProcessor : EntityMetadataProcessor<EntitySignMetadata>
+public class EntitySignMetadataProcessor : IEntityMetadataProcessor<EntitySignMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, EntitySignMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, EntitySignMetadata metadata)
     {
         uGUI_SignInput sign = gameObject.GetComponentInChildren<uGUI_SignInput>(true);
         if (sign)

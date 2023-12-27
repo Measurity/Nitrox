@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata;
 
-public class BeaconMetadataProcessor : EntityMetadataProcessor<BeaconMetadata>
+public class BeaconMetadataProcessor : IEntityMetadataProcessor<BeaconMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, BeaconMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, BeaconMetadata metadata)
     {
         if (gameObject.TryGetComponent(out Beacon beacon))
         {

@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class KeypadMetadataProcessor : EntityMetadataProcessor<KeypadMetadata>
+public class KeypadMetadataProcessor : IEntityMetadataProcessor<KeypadMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, KeypadMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, KeypadMetadata metadata)
     {
         Log.Debug($"Received keypad metadata change for {gameObject.name} with data of {metadata}");
 

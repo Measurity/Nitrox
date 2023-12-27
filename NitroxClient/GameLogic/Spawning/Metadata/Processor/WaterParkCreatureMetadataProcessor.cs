@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Processor;
 
-public class WaterParkCreatureMetadataProcessor : EntityMetadataProcessor<WaterParkCreatureMetadata>
+public class WaterParkCreatureMetadataProcessor : IEntityMetadataProcessor<WaterParkCreatureMetadata>
 {
-    public override void ProcessMetadata(GameObject gameObject, WaterParkCreatureMetadata metadata)
+    public void ProcessMetadata(GameObject gameObject, WaterParkCreatureMetadata metadata)
     {
         if (gameObject.TryGetComponent(out WaterParkCreature waterParkCreature))
         {
