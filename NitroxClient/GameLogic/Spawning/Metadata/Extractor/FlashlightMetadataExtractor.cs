@@ -4,9 +4,9 @@ using NitroxModel.DataStructures.GameLogic.Entities.Metadata;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Extractor;
 
-public class FlashlightMetadataExtractor : EntityMetadataExtractor<FlashLight, FlashlightMetadata>
+public class FlashlightMetadataExtractor : IEntityMetadataExtractor<FlashLight, FlashlightMetadata>
 {
-    public override FlashlightMetadata Extract(FlashLight entity)
+    public FlashlightMetadata Extract(FlashLight entity)
     {
         ToggleLights lights = entity.RequireComponent<ToggleLights>();
 

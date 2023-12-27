@@ -3,9 +3,9 @@ using NitroxModel.DataStructures.GameLogic.Entities.Metadata;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Extractor;
 
-public class ExosuitMetadataExtractor : EntityMetadataExtractor<Exosuit, ExosuitMetadata>
+public class ExosuitMetadataExtractor : IEntityMetadataExtractor<Exosuit, ExosuitMetadata>
 {
-    public override ExosuitMetadata Extract(Exosuit exosuit)
+    public ExosuitMetadata Extract(Exosuit exosuit)
     {
         LiveMixin liveMixin = exosuit.liveMixin;
         SubName subName = exosuit.subName;

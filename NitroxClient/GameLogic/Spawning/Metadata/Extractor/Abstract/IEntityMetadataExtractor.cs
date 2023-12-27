@@ -1,9 +1,8 @@
 using NitroxModel.DataStructures.GameLogic.Entities.Metadata;
-using NitroxModel.DataStructures.Util;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Extractor.Abstract;
 
-public interface IEntityMetadataExtractor
+public interface IEntityMetadataExtractor<in TIn, out TOut> where TOut : EntityMetadata
 {
-    public Optional<EntityMetadata> From(object o);
+    public TOut Extract(TIn o);
 }

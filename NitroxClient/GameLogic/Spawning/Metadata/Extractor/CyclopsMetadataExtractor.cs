@@ -6,9 +6,9 @@ using static NitroxClient.GameLogic.Spawning.Metadata.Extractor.CyclopsMetadataE
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Extractor;
 
-public class CyclopsMetadataExtractor : EntityMetadataExtractor<CyclopsGameObject, CyclopsMetadata>
+public class CyclopsMetadataExtractor : IEntityMetadataExtractor<CyclopsGameObject, CyclopsMetadata>
 {
-    public override CyclopsMetadata Extract(CyclopsGameObject cyclops)
+    public CyclopsMetadata Extract(CyclopsGameObject cyclops)
     {
         GameObject gameObject = cyclops.GameObject;
         CyclopsSilentRunningAbilityButton silentRunning = gameObject.RequireComponentInChildren<CyclopsSilentRunningAbilityButton>(true);

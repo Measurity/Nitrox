@@ -7,9 +7,9 @@ using NitroxModel_Subnautica.DataStructures;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Extractor;
 
-public class SubNameInputMetadataExtractor : EntityMetadataExtractor<SubNameInput, SubNameInputMetadata>
+public class SubNameInputMetadataExtractor : IEntityMetadataExtractor<SubNameInput, SubNameInputMetadata>
 {
-    public override SubNameInputMetadata Extract(SubNameInput subNameInput)
+    public SubNameInputMetadata Extract(SubNameInput subNameInput)
     {
         SubName subName = subNameInput.target;
         return new(subNameInput.selectedColorIndex, GetName(subName), GetColors(subName));

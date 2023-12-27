@@ -48,7 +48,6 @@ namespace NitroxClient
             }
 
             RegisterCoreDependencies(containerBuilder);
-            RegisterMetadataDependencies(containerBuilder);
             RegisterPacketProcessors(containerBuilder);
             RegisterColorSwapManagers(containerBuilder);
             RegisterInitialSyncProcessors(containerBuilder);
@@ -118,15 +117,6 @@ namespace NitroxClient
             containerBuilder.RegisterType<PlayerCinematics>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<NitroxPDATabManager>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<TimeManager>().InstancePerLifetimeScope();
-        }
-
-        private void RegisterMetadataDependencies(ContainerBuilder containerBuilder)
-        {
-            containerBuilder.RegisterAssemblyTypes(currentAssembly)
-                            .AssignableTo<IEntityMetadataExtractor>()
-                            .As<IEntityMetadataExtractor>()
-                            .AsSelf()
-                            .SingleInstance();
             containerBuilder.RegisterType<EntityMetadataManager>().InstancePerLifetimeScope();
         }
 

@@ -7,9 +7,9 @@ using static NitroxModel.DataStructures.GameLogic.Entities.Metadata.PlayerMetada
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Extractor;
 
-public class PlayerMetadataExtractor : EntityMetadataExtractor<Player, PlayerMetadata>
+public class PlayerMetadataExtractor : IEntityMetadataExtractor<Player, PlayerMetadata>
 {
-    public override PlayerMetadata Extract(Player player)
+    public PlayerMetadata Extract(Player player)
     {
         return new PlayerMetadata(ExtractEquippedItems());
     }

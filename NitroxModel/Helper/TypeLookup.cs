@@ -7,8 +7,8 @@ namespace NitroxModel.Helper;
 
 /// TODO: Convert this API to a source generator to get compile-time type safety and a performance boost.
 /// <summary>
-///     Type lookup helper for finding implementations that are compatible for the given <see cref="TBaseInterface" />. The
-///     given wrapper is used on every implementing type so that they are compatible with the first generic
+///     Finds implementations that are compatible for the given <see cref="TBaseInterface" />. A
+///     wrapper type is used on every implementing type so that they are compatible with the first generic
 ///     parameter of the given <see cref="TBaseInterface" />.
 /// </summary>
 /// <typeparam name="TBaseInterface">
@@ -110,7 +110,7 @@ public sealed class TypeLookup<TBaseInterface> : IReadOnlyDictionary<Type, TBase
             foreach (Type suitableInterface in typeInfo.AssignableInterfaces)
             {
                 Type lookupType = suitableInterface.GenericTypeArguments[0];
-                if (lookup.TryGetValue(lookupType, out TBaseInterface instance))
+                if (lookup.ContainsKey(lookupType))
                 {
                     string priorImplementor = previouslyCreatedInstances.Keys.Where(k => !k.IsInstanceOfType(typeInfo.ImplementingType)).FirstOrDefault(k => k.GetInterfaces().Any(i => i == suitableInterface)).GetNiceName();
                     string newImplementor = typeInfo.ImplementingType.GetNiceName();

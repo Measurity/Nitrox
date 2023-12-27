@@ -3,11 +3,11 @@ using NitroxModel.DataStructures.GameLogic.Entities.Metadata;
 
 namespace NitroxClient.GameLogic.Spawning.Metadata.Extractor;
 
-public class SeamothMetadataExtractor : EntityMetadataExtractor<SeaMoth, SeamothMetadata>
+public class SeamothMetadataExtractor : IEntityMetadataExtractor<SeaMoth, SeamothMetadata>
 {
-    public override SeamothMetadata Extract(SeaMoth seamoth)
+    public SeamothMetadata Extract(SeaMoth seamoth)
     {
-        bool lightsOn = (seamoth.toggleLights) ? seamoth.toggleLights.GetLightsActive() : true;
+        bool lightsOn = !seamoth.toggleLights || seamoth.toggleLights.GetLightsActive();
         LiveMixin liveMixin = seamoth.liveMixin;
         SubName subName = seamoth.subName;
 

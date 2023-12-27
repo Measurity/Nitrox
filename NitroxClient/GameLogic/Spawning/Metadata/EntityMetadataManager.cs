@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using NitroxClient.GameLogic.Spawning.Metadata.Extractor.Abstract;
 using NitroxClient.GameLogic.Spawning.Metadata.Processor.Abstract;
 using NitroxModel.Core;
@@ -14,20 +13,21 @@ namespace NitroxClient.GameLogic.Spawning.Metadata;
 
 public class EntityMetadataManager
 {
-    private readonly Dictionary<Type, IEntityMetadataExtractor> extractors;
+    private readonly TypeLookup<IEntityMetadataExtractor<object, EntityMetadata>> extractors;
     private readonly TypeLookup<IEntityMetadataProcessor<EntityMetadata>> processors;
 
-    public EntityMetadataManager(IEnumerable<IEntityMetadataExtractor> extractors)
+    public EntityMetadataManager()
     {
-        this.extractors = extractors.ToDictionary(p => p.GetType().BaseType.GetGenericArguments()[0]);
-        processors = TypeLookup<IEntityMetadataProcessor<EntityMetadata>>.Create<MetadataProcessorWrapper<EntityMetadata>>(Assembly.GetExecutingAssembly().GetTypes(), NitroxServiceLocator.LocateService);
+        Type[] allAssemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
+        extractors = TypeLookup<IEntityMetadataExtractor<object, EntityMetadata>>.Create<MetadataExtractorWrapper<object, EntityMetadata>>(allAssemblyTypes, NitroxServiceLocator.LocateService);
+        processors = TypeLookup<IEntityMetadataProcessor<EntityMetadata>>.Create<MetadataProcessorWrapper<EntityMetadata>>(allAssemblyTypes, NitroxServiceLocator.LocateService);
     }
 
     public Optional<EntityMetadata> Extract(object o)
     {
-        if (extractors.TryGetValue(o.GetType(), out IEntityMetadataExtractor extractor))
+        if (extractors.TryGetValue(o.GetType(), out IEntityMetadataExtractor<object, EntityMetadata> extractor))
         {
-            return extractor.From(o);
+            return extractor.Extract(o);
         }
 
         return Optional.Empty;
@@ -37,9 +37,9 @@ public class EntityMetadataManager
     {
         foreach (Component component in o.GetComponents<Component>())
         {
-            if (extractors.TryGetValue(component.GetType(), out IEntityMetadataExtractor extractor))
+            if (extractors.TryGetValue(component.GetType(), out IEntityMetadataExtractor<object, EntityMetadata> extractor))
             {
-                return extractor.From(component);
+                return extractor.Extract(component);
             }
         }
 
@@ -66,11 +66,21 @@ public class EntityMetadataManager
         }
     }
 
+    [UsedImplicitly]
     private record MetadataProcessorWrapper<T>(IEntityMetadataProcessor<T> Inner) : IEntityMetadataProcessor<EntityMetadata> where T : EntityMetadata
     {
         public void ProcessMetadata(GameObject gameObject, EntityMetadata metadata)
         {
             Inner.ProcessMetadata(gameObject, (T)metadata);
+        }
+    }
+
+    [UsedImplicitly]
+    private record MetadataExtractorWrapper<TIn, TOut>(IEntityMetadataExtractor<object, TOut> Inner) : IEntityMetadataExtractor<object, EntityMetadata> where TOut : EntityMetadata
+    {
+        public EntityMetadata Extract(object o)
+        {
+            return Inner.Extract((TIn)o);
         }
     }
 }
