@@ -20,9 +20,7 @@ namespace NitroxModel.DataStructures.GameLogic
         [DataMember(Order = 3)]
         public int Level { get; }
 
-        private static readonly Lazy<IMap> map = new(() => NitroxServiceLocator.LocateService<IMap>());
-
-        private NitroxInt3 BatchPosition => BatchId * map.Value.BatchSize - map.Value.BatchDimensionCenter;
+        private NitroxInt3 BatchPosition => BatchId * SubnauticaMap.BatchSize - SubnauticaMap.BatchDimensionCenter;
         public NitroxInt3 Position => BatchPosition + CellId * GetCellSize();
 
         public NitroxInt3 Center
@@ -51,7 +49,7 @@ namespace NitroxModel.DataStructures.GameLogic
         {
             Level = level;
 
-            NitroxVector3 localPosition = (worldSpace + map.Value.BatchDimensionCenter) / map.Value.BatchSize;
+            NitroxVector3 localPosition = (worldSpace + SubnauticaMap.BatchDimensionCenter) / SubnauticaMap.BatchSize;
             BatchId = NitroxInt3.Floor(localPosition);
 
             NitroxVector3 cell = (localPosition - BatchId) * GetCellsPerBlock();
@@ -124,7 +122,7 @@ namespace NitroxModel.DataStructures.GameLogic
 
         public NitroxInt3 GetCellSize()
         {
-            return GetCellSize(map.Value.BatchDimensions);
+            return GetCellSize(SubnauticaMap.BatchDimensions);
         }
 
         public NitroxInt3 GetCellSize(NitroxInt3 blocksPerBatch)

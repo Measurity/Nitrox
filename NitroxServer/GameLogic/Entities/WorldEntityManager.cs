@@ -205,28 +205,26 @@ namespace NitroxServer.GameLogic.Entities
 
         public void LoadAllUnspawnedEntities(System.Threading.CancellationToken token)
         {            
-            IMap map = NitroxServiceLocator.LocateService<IMap>();
+            int totalEntities = 0;
 
-            int totalEntites = 0;
-
-            for (int x = 0; x < map.DimensionsInBatches.X; x++)
+            for (int x = 0; x < SubnauticaMap.DimensionsInBatches.X; x++)
             {
                 token.ThrowIfCancellationRequested();
-                for (int y = 0; y < map.DimensionsInBatches.Y; y++)
+                for (int y = 0; y < SubnauticaMap.DimensionsInBatches.Y; y++)
                 {
-                    for (int z = 0; z < map.DimensionsInBatches.Z; z++)
+                    for (int z = 0; z < SubnauticaMap.DimensionsInBatches.Z; z++)
                     {
                         int spawned = LoadUnspawnedEntities(new(x, y, z), true);
 
                         Log.Debug($"Loaded {spawned} entities from batch ({x}, {y}, {z})");
 
-                        totalEntites += spawned;
+                        totalEntities += spawned;
                     }
                 }
 
-                if (totalEntites > 0)
+                if (totalEntities > 0)
                 {
-                    Log.Info($"Loading: {(int)((totalEntites/ 504732.0) * 100)}%");
+                    Log.Info($"Loading: {(int)((totalEntities/ 504732.0) * 100)}%");
                 }
             }
         }

@@ -54,7 +54,6 @@ namespace NitroxServer_Subnautica
                 [TechType.Reefback.ToDto()] = new ReefbackBootstrapper()
             }).SingleInstance();
 
-            containerBuilder.RegisterType<SubnauticaMap>().As<IMap>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<EntityRegistry>().AsSelf().InstancePerLifetimeScope();
         }
     }
