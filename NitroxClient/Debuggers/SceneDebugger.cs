@@ -7,13 +7,15 @@ using System.Text;
 using NitroxClient.Debuggers.Drawer;
 using NitroxClient.MonoBehaviours;
 using NitroxClient.Unity.Helper;
+using NitroxModel.Core;
+using NitroxModel.Helper;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace NitroxClient.Debuggers;
 
 [ExcludeFromCodeCoverage]
-public class SceneDebugger : BaseDebugger
+public class SceneDebugger : BaseDebugger, IDebugObjectSelector
 {
     public GameObject SelectedObject { get; private set; }
     private int selectedComponentID;
@@ -25,35 +27,18 @@ public class SceneDebugger : BaseDebugger
     private Vector2 gameObjectScrollPos;
     private Vector2 hierarchyScrollPos;
 
-    private readonly Dictionary<Type, IDrawer> debuggerDrawers = new();
-    private readonly Dictionary<Type, IStructDrawer> structDebuggerDrawers = new();
+    private readonly Lazy<TypeLookup<IDrawer<object>>> debuggerDrawers = new(() => TypeLookup<IDrawer<object>>.Create<DrawerWrapper<object>>(Assembly.GetExecutingAssembly().GetTypes(), NitroxServiceLocator.LocateService));
 
     private readonly Dictionary<int, bool> componentsVisibilityByID = new();
     private readonly Dictionary<int, FieldInfo[]> cachedFieldsByComponentID = new();
     private readonly Dictionary<int, MethodInfo[]> cachedMethodsByComponentID = new();
     private readonly Dictionary<int, IDictionary<Type, bool>> enumVisibilityByComponentIDAndEnumType = new();
 
-    public SceneDebugger(IEnumerable<IDrawer> drawers, IEnumerable<IStructDrawer> structDrawers) : base(650, null, KeyCode.S, true, false, false, GUISkinCreationOptions.DERIVEDCOPY)
+    public SceneDebugger() : base(650, null, KeyCode.S, true, false, false, GUISkinCreationOptions.DERIVEDCOPY)
     {
         ActiveTab = AddTab("Scenes", RenderTabScenes);
         AddTab("Hierarchy", RenderTabHierarchy);
         AddTab("GameObject", RenderTabGameObject);
-
-        foreach (IDrawer drawer in drawers)
-        {
-            foreach (Type type in drawer.ApplicableTypes)
-            {
-                debuggerDrawers.Add(type, drawer);
-            }
-        }
-
-        foreach (IStructDrawer structDrawer in structDrawers)
-        {
-            foreach (Type type in structDrawer.ApplicableTypes)
-            {
-                structDebuggerDrawers.Add(type, structDrawer);
-            }
-        }
     }
 
     protected override void OnSetSkin(GUISkin skin)
@@ -275,7 +260,7 @@ public class SceneDebugger : BaseDebugger
                     if (visible)
                     {
                         GUILayout.Space(10);
-                        if (debuggerDrawers.TryGetValue(componentType, out IDrawer drawer))
+                        if (debuggerDrawers.Value.TryGetValue(componentType, out IDrawer<object> drawer))
                         {
                             drawer.Draw(component);
                         }
@@ -322,13 +307,16 @@ public class SceneDebugger : BaseDebugger
                         JumpToComponent(component);
                     }
                 }
-                else if (debuggerDrawers.TryGetValue(field.FieldType, out IDrawer drawer))
+                else if (debuggerDrawers.Value.TryGetValue(field.FieldType, out IDrawer<object> drawer))
                 {
-                    drawer.Draw(fieldValue);
-                }
-                else if (structDebuggerDrawers.TryGetValue(field.FieldType, out IStructDrawer structDrawer))
-                {
-                    field.SetValue(target, structDrawer.Draw(fieldValue));
+                    if (fieldValue == null)
+                    {
+                        GUILayout.Box("Field is null", GUILayout.Width(NitroxGUILayout.VALUE_WIDTH));
+                    }
+                    else
+                    {
+                        field.SetValue(target, drawer.Draw(fieldValue));
+                    }
                 }
                 else
                 {
@@ -490,5 +478,10 @@ public class SceneDebugger : BaseDebugger
         UpdateSelectedObject(item.gameObject);
         RenderTabGameObject();
         selectedComponentID = item.GetInstanceID();
+    }
+
+    private sealed record DrawerWrapper<T>(IDrawer<T> Inner) : IDrawer<object>
+    {
+        public object Draw(object target) => Inner.Draw((T)target);
     }
 }

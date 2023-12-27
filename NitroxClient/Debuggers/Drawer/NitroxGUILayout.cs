@@ -159,7 +159,8 @@ public static class NitroxGUILayout
 
     public static T EnumPopup<T>(T selected, float buttonWidth = VALUE_WIDTH) where T : Enum
     {
-        return (T)EnumPopupInternal(selected, buttonWidth);
+        Enum enumValue = EnumPopupInternal(selected, buttonWidth);
+        return enumValue is T value ? value : default;
     }
 
     /// <summary>
@@ -181,9 +182,9 @@ public static class NitroxGUILayout
                 long lValue = Convert.ToInt64(value);
                 long lFlag = Convert.ToInt64(flag);
                 return (lValue & lFlag) != 0;
-            };
+            }
 
-            T SetFlags<T>(T value, T flags, bool toggle)
+            T SetFlags<T>(T value, T flags, bool toggle) where T : Enum
             {
                 long lValue = Convert.ToInt64(value);
                 long lFlag = Convert.ToInt64(flags);
@@ -201,8 +202,12 @@ public static class NitroxGUILayout
                     lValue = 0;
                 }
 
-                return (T)Enum.ToObject(typeof(T), lValue);
-            };
+                if (typeof(T).IsEnum)
+                {
+                    return (T)Enum.ToObject(typeof(T), lValue);
+                }
+                return default;
+            }
 
             Enum[] enumValues = Enum.GetValues(enumType).Cast<Enum>().ToArray();
 

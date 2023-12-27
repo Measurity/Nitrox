@@ -1,31 +1,28 @@
 ﻿using System;
 using NitroxClient.Debuggers.Drawer.Unity;
+using NitroxModel.Helper;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace NitroxClient.Debuggers.Drawer.UnityUI;
 
-public class GridLayoutGroupDrawer : IDrawer
+public class GridLayoutGroupDrawer : IDrawer<GridLayoutGroup>
 {
-    public Type[] ApplicableTypes { get; } = { typeof(GridLayoutGroup) };
+    private readonly DimensionDrawer dimensionDrawer;
 
-    public void Draw(object target)
+    public GridLayoutGroupDrawer(DimensionDrawer dimensionDrawer)
     {
-        switch (target)
-        {
-            case GridLayoutGroup gridLayoutGroup:
-                DrawGridLayoutGroup(gridLayoutGroup);
-                break;
-        }
+        Validate.NotNull(dimensionDrawer);
+        this.dimensionDrawer = dimensionDrawer;
     }
 
-    private static void DrawGridLayoutGroup(GridLayoutGroup gridLayoutGroup)
+    public GridLayoutGroup Draw(GridLayoutGroup gridLayoutGroup)
     {
         using (new GUILayout.HorizontalScope())
         {
             GUILayout.Label("Padding", NitroxGUILayout.DrawerLabel, GUILayout.Width(NitroxGUILayout.DEFAULT_LABEL_WIDTH));
             NitroxGUILayout.Separator();
-            Tuple<int, int, int, int> padding = VectorDrawer.DrawInt4(gridLayoutGroup.padding.left, gridLayoutGroup.padding.right,
+            Tuple<int, int, int, int> padding = DimensionDrawer.DrawInt4(gridLayoutGroup.padding.left, gridLayoutGroup.padding.right,
                                                                       gridLayoutGroup.padding.top, gridLayoutGroup.padding.bottom);
 
             gridLayoutGroup.padding.left = padding.Item1;
@@ -38,14 +35,14 @@ public class GridLayoutGroupDrawer : IDrawer
         {
             GUILayout.Label("Cell Size", NitroxGUILayout.DrawerLabel, GUILayout.Width(NitroxGUILayout.DEFAULT_LABEL_WIDTH));
             NitroxGUILayout.Separator();
-            gridLayoutGroup.cellSize = VectorDrawer.DrawVector2(gridLayoutGroup.cellSize);
+            gridLayoutGroup.cellSize = dimensionDrawer.Draw(gridLayoutGroup.cellSize);
         }
 
         using (new GUILayout.HorizontalScope())
         {
             GUILayout.Label("Spacing", NitroxGUILayout.DrawerLabel, GUILayout.Width(NitroxGUILayout.DEFAULT_LABEL_WIDTH));
             NitroxGUILayout.Separator();
-            gridLayoutGroup.spacing = VectorDrawer.DrawVector2(gridLayoutGroup.spacing);
+            gridLayoutGroup.spacing = dimensionDrawer.Draw(gridLayoutGroup.spacing);
         }
 
         using (new GUILayout.HorizontalScope())
@@ -85,5 +82,7 @@ public class GridLayoutGroupDrawer : IDrawer
                 gridLayoutGroup.constraintCount = Math.Max(1, NitroxGUILayout.IntField(gridLayoutGroup.constraintCount));
             }
         }
+
+        return gridLayoutGroup;
     }
 }

@@ -4,22 +4,11 @@ using UnityEngine.UI;
 
 namespace NitroxClient.Debuggers.Drawer.UnityUI;
 
-public class LayoutElementDrawer : IDrawer
+public class LayoutElementDrawer : IDrawer<LayoutElement>
 {
     private const float LABEL_WIDTH = 100;
-    public Type[] ApplicableTypes { get; } = { typeof(LayoutElement) };
 
-    public void Draw(object target)
-    {
-        switch (target)
-        {
-            case LayoutElement layoutElement:
-                DrawLayoutElement(layoutElement);
-                break;
-        }
-    }
-
-    private static void DrawLayoutElement(LayoutElement layoutElement)
+    public LayoutElement Draw(LayoutElement layoutElement)
     {
         using (new GUILayout.HorizontalScope())
         {
@@ -45,6 +34,8 @@ public class LayoutElementDrawer : IDrawer
             NitroxGUILayout.Separator();
             layoutElement.layoutPriority = NitroxGUILayout.IntField(layoutElement.layoutPriority);
         }
+
+        return layoutElement;
     }
 
     private static float DrawToggleableFloat(string name, float value)

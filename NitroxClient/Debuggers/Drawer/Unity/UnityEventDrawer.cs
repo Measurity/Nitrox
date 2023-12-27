@@ -1,29 +1,18 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 namespace NitroxClient.Debuggers.Drawer.Unity;
 
-public class UnityEventDrawer : IDrawer
+public class UnityEventDrawer : IDrawer<UnityEvent>, IDrawer<UnityEvent<bool>>, IDrawer<UnityEventBase>
 {
     private const float LABEL_WIDTH = 250;
 
-    public Type[] ApplicableTypes { get; } = { typeof(UnityEvent), typeof(UnityEvent<bool>) };
-
-    public void Draw(object target)
+    public UnityEvent Draw(UnityEvent unityEvent)
     {
-        switch (target)
-        {
-            case UnityEvent unityEvent:
-                DrawUnityEvent(unityEvent);
-                break;
-            case UnityEvent<bool> unityEventBool:
-                DrawUnityEventBool(unityEventBool);
-                break;
-        }
+        return Draw(unityEvent, "NoName");
     }
 
-    public static void DrawUnityEvent(UnityEvent unityEvent, string name = "NoName")
+    public UnityEvent Draw(UnityEvent unityEvent, string name)
     {
         using (new GUILayout.HorizontalScope())
         {
@@ -35,10 +24,17 @@ public class UnityEventDrawer : IDrawer
             }
         }
 
-        DrawUnityEventBase(unityEvent);
+        Draw((UnityEventBase)unityEvent);
+
+        return unityEvent;
     }
 
-    public static void DrawUnityEventBool(UnityEvent<bool> unityEvent, string name = "NoName")
+    public UnityEvent<bool> Draw(UnityEvent<bool> target)
+    {
+        return Draw(target, "NoName");
+    }
+
+    public UnityEvent<bool> Draw(UnityEvent<bool> unityEvent, string name)
     {
         using (new GUILayout.HorizontalScope())
         {
@@ -54,10 +50,12 @@ public class UnityEventDrawer : IDrawer
             }
         }
 
-        DrawUnityEventBase(unityEvent);
+        Draw((UnityEventBase)unityEvent);
+
+        return unityEvent;
     }
 
-    public static void DrawUnityEventBase(UnityEventBase unityEventBase)
+    public UnityEventBase Draw(UnityEventBase unityEventBase)
     {
         for (int index = 0; index < unityEventBase.GetPersistentEventCount(); index++)
         {
@@ -67,5 +65,7 @@ public class UnityEventDrawer : IDrawer
                 GUILayout.Label(unityEventBase.GetPersistentMethodName(index), NitroxGUILayout.DrawerLabel, GUILayout.Width(LABEL_WIDTH));
             }
         }
+
+        return unityEventBase;
     }
 }

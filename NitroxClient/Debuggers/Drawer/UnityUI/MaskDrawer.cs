@@ -1,26 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace NitroxClient.Debuggers.Drawer.UnityUI;
 
-public class MaskDrawer : IDrawer
+public class MaskDrawer : IDrawer<Mask>, IDrawer<RectMask2D>
 {
-    public Type[] ApplicableTypes { get; } = { typeof(Mask), typeof(RectMask2D) };
-
-    public void Draw(object target)
-    {
-        switch (target)
-        {
-            case Mask mask:
-                DrawMask(mask);
-                break;
-            case RectMask2D: // RectMask2D has no fields in the editor.
-                break;
-        }
-    }
-
-    private static void DrawMask(Mask mask)
+    public Mask Draw(Mask mask)
     {
         using (new GUILayout.HorizontalScope())
         {
@@ -28,5 +13,12 @@ public class MaskDrawer : IDrawer
             NitroxGUILayout.Separator();
             mask.showMaskGraphic = NitroxGUILayout.BoolField(mask.showMaskGraphic);
         }
+        return mask;
+    }
+
+    public RectMask2D Draw(RectMask2D target)
+    {
+        // RectMask2D has no fields in the editor.
+        return target;
     }
 }

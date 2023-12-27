@@ -1,29 +1,26 @@
-using System;
-using NitroxModel.Core;
+using NitroxModel.Helper;
 using UnityEngine;
 
 namespace NitroxClient.Debuggers.Drawer.Unity;
 
-public class TransformDrawer : IDrawer
+public class TransformDrawer : IDrawer<Transform>
 {
+    private readonly IDebugObjectSelector objectSelector;
+    private readonly DimensionDrawer dimensionDrawer;
     private const float LABEL_WIDTH = 100;
     private const float VECTOR_MAX_WIDTH = 405;
 
-    public Type[] ApplicableTypes { get; } = { typeof(Transform) };
-
     private bool showGlobal;
 
-    public void Draw(object target)
+    public TransformDrawer(IDebugObjectSelector objectSelector, DimensionDrawer dimensionDrawer)
     {
-        switch (target)
-        {
-            case Transform transform:
-                DrawTransform(transform);
-                break;
-        }
+        Validate.NotNull(objectSelector);
+        Validate.NotNull(dimensionDrawer);
+        this.objectSelector = objectSelector;
+        this.dimensionDrawer = dimensionDrawer;
     }
 
-    private void DrawTransform(Transform transform)
+    public Transform Draw(Transform transform)
     {
         using (new GUILayout.VerticalScope())
         {
@@ -33,21 +30,21 @@ public class TransformDrawer : IDrawer
                 {
                     GUILayout.Label("Global Position", NitroxGUILayout.DrawerLabel, GUILayout.Width(LABEL_WIDTH));
                     NitroxGUILayout.Separator();
-                    VectorDrawer.DrawVector3(transform.position, VECTOR_MAX_WIDTH);
+                    dimensionDrawer.Draw(transform.position, VECTOR_MAX_WIDTH);
                 }
 
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("Global Rotation", NitroxGUILayout.DrawerLabel, GUILayout.Width(LABEL_WIDTH));
                     NitroxGUILayout.Separator();
-                    VectorDrawer.DrawVector3(transform.rotation.eulerAngles, VECTOR_MAX_WIDTH);
+                    dimensionDrawer.Draw(transform.rotation.eulerAngles, VECTOR_MAX_WIDTH);
                 }
 
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("Lossy Scale", NitroxGUILayout.DrawerLabel, GUILayout.Width(LABEL_WIDTH));
                     NitroxGUILayout.Separator();
-                    VectorDrawer.DrawVector3(transform.lossyScale, VECTOR_MAX_WIDTH);
+                    dimensionDrawer.Draw(transform.lossyScale, VECTOR_MAX_WIDTH);
                 }
             }
             else
@@ -56,21 +53,21 @@ public class TransformDrawer : IDrawer
                 {
                     GUILayout.Label("Local  Position", NitroxGUILayout.DrawerLabel, GUILayout.Width(LABEL_WIDTH));
                     NitroxGUILayout.Separator();
-                    transform.localPosition = VectorDrawer.DrawVector3(transform.localPosition, VECTOR_MAX_WIDTH);
+                    transform.localPosition = dimensionDrawer.Draw(transform.localPosition, VECTOR_MAX_WIDTH);
                 }
 
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("Local  Rotation", NitroxGUILayout.DrawerLabel, GUILayout.Width(LABEL_WIDTH));
                     NitroxGUILayout.Separator();
-                    transform.localRotation = Quaternion.Euler(VectorDrawer.DrawVector3(transform.localRotation.eulerAngles, VECTOR_MAX_WIDTH));
+                    transform.localRotation = Quaternion.Euler(dimensionDrawer.Draw(transform.localRotation.eulerAngles, VECTOR_MAX_WIDTH));
                 }
 
                 using (new GUILayout.HorizontalScope())
                 {
                     GUILayout.Label("Local  Scale", NitroxGUILayout.DrawerLabel, GUILayout.Width(LABEL_WIDTH));
                     NitroxGUILayout.Separator();
-                    transform.localScale = VectorDrawer.DrawVector3(transform.localScale, VECTOR_MAX_WIDTH);
+                    transform.localScale = dimensionDrawer.Draw(transform.localScale, VECTOR_MAX_WIDTH);
                 }
             }
 
@@ -88,12 +85,14 @@ public class TransformDrawer : IDrawer
                     {
                         if (transform.parent)
                         {
-                            NitroxServiceLocator.Cache<SceneDebugger>.Value.JumpToComponent(transform.parent);
+                            objectSelector.JumpToComponent(transform.parent);
                         }
-                        GameObject.Destroy(transform.gameObject);
+                        Object.Destroy(transform.gameObject);
                     }
                 }
             }
         }
+
+        return transform;
     }
 }

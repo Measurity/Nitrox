@@ -1,24 +1,20 @@
 ﻿using System;
-using NitroxModel.Core;
+using NitroxModel.Helper;
 using UnityEngine;
 
 namespace NitroxClient.Debuggers.Drawer.UnityUI;
 
-public class CanvasDrawer : IDrawer
+public class CanvasDrawer : IDrawer<Canvas>
 {
-    public Type[] ApplicableTypes { get; } = { typeof(Canvas) };
+    private readonly IDebugObjectSelector objectSelector;
 
-    public void Draw(object target)
+    public CanvasDrawer(IDebugObjectSelector objectSelector)
     {
-        switch (target)
-        {
-            case Canvas canvas:
-                DrawCanvas(canvas);
-                break;
-        }
+        Validate.NotNull(objectSelector);
+        this.objectSelector = objectSelector;
     }
 
-    private static void DrawCanvas(Canvas canvas)
+    public Canvas Draw(Canvas canvas)
     {
         RenderMode renderMode = canvas.renderMode;
 
@@ -37,7 +33,7 @@ public class CanvasDrawer : IDrawer
                 NitroxGUILayout.Separator();
                 if (GUILayout.Button("Jump to", GUILayout.Width(NitroxGUILayout.DEFAULT_LABEL_WIDTH)))
                 {
-                    NitroxServiceLocator.Cache<SceneDebugger>.Value.UpdateSelectedObject(canvas.worldCamera.gameObject);
+                    objectSelector.UpdateSelectedObject(canvas.worldCamera.gameObject);
                 }
             }
 
@@ -96,7 +92,7 @@ public class CanvasDrawer : IDrawer
                     NitroxGUILayout.Separator();
                     if (GUILayout.Button("Jump to", GUILayout.Width(NitroxGUILayout.DEFAULT_LABEL_WIDTH)))
                     {
-                        NitroxServiceLocator.Cache<SceneDebugger>.Value.UpdateSelectedObject(canvas.worldCamera.gameObject);
+                        objectSelector.UpdateSelectedObject(canvas.worldCamera.gameObject);
                     }
                 }
 
@@ -111,5 +107,7 @@ public class CanvasDrawer : IDrawer
                 }
             }
         }
+
+        return canvas;
     }
 }

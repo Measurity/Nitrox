@@ -5,21 +5,20 @@ using UnityEngine.UI;
 
 namespace NitroxClient.Debuggers.Drawer.UnityUI;
 
-public class HorizontalOrVerticalLayoutGroupDrawer : IDrawer
+public class HorizontalOrVerticalLayoutGroupDrawer : IDrawer<HorizontalLayoutGroup>, IDrawer<VerticalLayoutGroup>
 {
-    public Type[] ApplicableTypes { get; } = { typeof(HorizontalLayoutGroup), typeof(VerticalLayoutGroup) };
-
-    public void Draw(object target)
+    public HorizontalLayoutGroup Draw(HorizontalLayoutGroup target)
     {
-        switch (target)
-        {
-            case HorizontalLayoutGroup horizontalLayoutGroup:
-                DrawLayoutGroup(horizontalLayoutGroup);
-                break;
-            case VerticalLayoutGroup verticalLayoutGroup:
-                DrawLayoutGroup(verticalLayoutGroup);
-                break;
-        }
+        DrawLayoutGroup(target);
+
+        return target;
+    }
+
+    public VerticalLayoutGroup Draw(VerticalLayoutGroup target)
+    {
+        DrawLayoutGroup(target);
+
+        return target;
     }
 
     private static void DrawLayoutGroup(HorizontalOrVerticalLayoutGroup layoutGroup)
@@ -28,7 +27,7 @@ public class HorizontalOrVerticalLayoutGroupDrawer : IDrawer
         {
             GUILayout.Label("Padding", NitroxGUILayout.DrawerLabel, GUILayout.Width(NitroxGUILayout.DEFAULT_LABEL_WIDTH));
             NitroxGUILayout.Separator();
-            Tuple<int, int, int, int> padding = VectorDrawer.DrawInt4(layoutGroup.padding.left, layoutGroup.padding.right,
+            Tuple<int, int, int, int> padding = DimensionDrawer.DrawInt4(layoutGroup.padding.left, layoutGroup.padding.right,
                                                                       layoutGroup.padding.top, layoutGroup.padding.bottom);
 
             layoutGroup.padding.left = padding.Item1;
