@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using NitroxModel.Discovery.Models;
 
@@ -15,11 +15,11 @@ internal class PlatformToIconConverter : Converter<PlatformToIconConverter>
     {
         return platform switch
         {
-            Platform.EPIC => "/Assets/Images/store-icons/epic-2x.png",
-            Platform.STEAM => "/Assets/Images/store-icons/steam-2x.png",
-            Platform.MICROSOFT => "/Assets/Images/store-icons/xbox-2x.png",
-            Platform.DISCORD => "/Assets/Images/store-icons/discord-2x.png",
-            _ => "/Assets/Images/store-icons/missing-2x.png",
+            Platform.EPIC => "/Assets/Images/store-icons/epic.png",
+            Platform.STEAM => "/Assets/Images/store-icons/steam.png",
+            Platform.MICROSOFT => "/Assets/Images/store-icons/xbox.png",
+            Platform.DISCORD => "/Assets/Images/store-icons/discord.png",
+            _ => "/Assets/Images/store-icons/missing.png",
         };
     }
 }

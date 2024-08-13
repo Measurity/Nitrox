@@ -36,13 +36,13 @@
         <ScrollViewer Classes="main">
             <StackPanel Spacing="23" Background="{DynamicResource BrandWhiteBrush}">
                 <TextBlock Classes="header" Text="Community" />
-                <Image Source="/Assets/Images/communityHeader.png" MaxWidth="1580" />
+                <Image Source="/Assets/Images/banners/community.png" MaxWidth="1580" />
                 <UniformGrid HorizontalAlignment="Center" Rows="2" Columns="2">
                     <Border>
                         <StackPanel>
                             <Panel>
                                 <Button Classes="anycontent" ToolTip.Tip="Join the Discord Server" Command="{Binding DiscordLinkCommand}">
-                                    <Image Source="/Assets/Images/social/discordIco.png" />
+                                    <Image Source="/Assets/Images/social-icons/discord.png" />
                                 </Button>
                                 <Button Content="Join Discord" ToolTip.Tip="Join the Discord Server" Command="{Binding DiscordLinkCommand}" />
                             </Panel>
@@ -54,7 +54,7 @@
                         <StackPanel>
                             <Grid>
                                 <Button Classes="anycontent" ToolTip.Tip="Follow on Twitter" Command="{Binding TwitterLinkCommand}">
-                                    <Image Source="/Assets/Images/social/twitterIco.png" />
+                                    <Image Source="/Assets/Images/social-icons/twitter.png" />
                                 </Button>
         
                                 <Button Content="Follow" ToolTip.Tip="Follow on Twitter" Command="{Binding TwitterLinkCommand}" />
@@ -67,7 +67,7 @@
                         <StackPanel>
                             <Grid>
                                 <Button Classes="anycontent" ToolTip.Tip="Nitrox Subreddit" Command="{Binding RedditLinkCommand}">
-                                    <Image Source="/Assets/Images/social/redditIco.png" />
+                                    <Image Source="/Assets/Images/social-icons/reddit.png" />
                                 </Button>
         
                                 <Button Content="Join Subreddit" ToolTip.Tip="Nitrox Subreddit" Command="{Binding RedditLinkCommand}" />
@@ -80,7 +80,7 @@
                         <StackPanel>
                             <Grid>
                                 <Button Classes="anycontent" ToolTip.Tip="Contribute on GitHub" Command="{Binding GithubLinkCommand}">
-                                    <Image Source="/Assets/Images/social/githubIco.png" />
+                                    <Image Source="/Assets/Images/social-icons/github.png" />
                                 </Button>
                                 <Button Content="Contribute" ToolTip.Tip="Contribute on GitHub" Command="{Binding GithubLinkCommand}" />
                             </Grid>

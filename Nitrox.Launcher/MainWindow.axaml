@@ -138,7 +138,7 @@
             <Border Grid.Column="0" Classes="nav">
                 <Grid RowDefinitions="80,*">
                     <!-- The "NITROX" header. -->
-                    <Image Grid.Row="0" Classes="header" Source="/Assets/Images/nitroxLogo.png" />
+                    <Image Grid.Row="0" Classes="header" Source="/Assets/Images/nitrox-logo.png" />
                     <!-- Navigation items -->
                     <Panel Grid.Row="1">
                         <StackPanel Classes="nav">
