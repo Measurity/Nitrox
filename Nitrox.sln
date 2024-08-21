@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionF
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		GenerateLibFolder.props = GenerateLibFolder.props
+		release.sh = release.sh
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NitroxPatcher", "NitroxPatcher\NitroxPatcher.csproj", "{39E377AD-2163-4428-952D-EBECD402C8F3}"
@@ -26,9 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NitroxServer", "NitroxServe
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Nitrox.Assets.Subnautica", "Nitrox.Assets.Subnautica\Nitrox.Assets.Subnautica.shproj", "{79E92B6D-5D25-4254-AC9F-FA9A1CD3CBC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nitrox.Launcher", "Nitrox.Launcher\Nitrox.Launcher.csproj", "{30493A43-7EB3-4898-A82F-98A387284EB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nitrox.Launcher", "Nitrox.Launcher\Nitrox.Launcher.csproj", "{30493A43-7EB3-4898-A82F-98A387284EB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nitrox.Test", "Nitrox.Test\Nitrox.Test.csproj", "{B4C9C786-10A1-4091-A88F-C22AA14C05D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nitrox.Test", "Nitrox.Test\Nitrox.Test.csproj", "{B4C9C786-10A1-4091-A88F-C22AA14C05D4}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
