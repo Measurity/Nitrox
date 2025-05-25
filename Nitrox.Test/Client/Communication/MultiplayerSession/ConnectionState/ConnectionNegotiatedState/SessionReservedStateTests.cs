@@ -26,10 +26,7 @@ namespace NitroxClient.Communication.MultiplayerSession.ConnectionState
         public void JoinSessionShouldSendPlayerJoiningMultiplayerSessionPacket()
         {
             // Arrange
-            SessionReservation successfulReservation = new SessionReservation(
-                TestConstants.TEST_CORRELATION_ID,
-                TestConstants.TEST_PLAYER_ID,
-                TestConstants.TEST_RESERVATION_KEY);
+            SessionReservation successfulReservation = new SessionReservation(TestConstants.TEST_RESERVATION_KEY);
 
             IClient client = Substitute.For<IClient>();
             client.IsConnected.Returns(true);
@@ -51,10 +48,7 @@ namespace NitroxClient.Communication.MultiplayerSession.ConnectionState
         public void JoinSessionShouldTransitionToSessionJoinedState()
         {
             // Arrange
-            SessionReservation successfulReservation = new SessionReservation(
-                TestConstants.TEST_CORRELATION_ID,
-                TestConstants.TEST_PLAYER_ID,
-                TestConstants.TEST_RESERVATION_KEY);
+            SessionReservation successfulReservation = new SessionReservation(TestConstants.TEST_RESERVATION_KEY);
 
             IClient serverClient = Substitute.For<IClient>();
             serverClient.IsConnected.Returns(true);

@@ -31,6 +31,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nitrox.Server.Subnautica", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nitrox.Server.Subnautica.Database", "Nitrox.Server.Subnautica.Database\Nitrox.Server.Subnautica.Database.csproj", "{1D646851-0F30-4C6D-BAFA-680B77E50C44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nitrox.Model.Test", "Nitrox.Model.Test\Nitrox.Model.Test.csproj", "{6BDE0EBE-38EF-43B5-8F35-488E37F516F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHelper", "TestHelper\TestHelper.csproj", "{CAE903CA-25C8-4040-909D-A56AE51E4874}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{1D646851-0F30-4C6D-BAFA-680B77E50C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D646851-0F30-4C6D-BAFA-680B77E50C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D646851-0F30-4C6D-BAFA-680B77E50C44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BDE0EBE-38EF-43B5-8F35-488E37F516F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BDE0EBE-38EF-43B5-8F35-488E37F516F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BDE0EBE-38EF-43B5-8F35-488E37F516F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BDE0EBE-38EF-43B5-8F35-488E37F516F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAE903CA-25C8-4040-909D-A56AE51E4874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAE903CA-25C8-4040-909D-A56AE51E4874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAE903CA-25C8-4040-909D-A56AE51E4874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAE903CA-25C8-4040-909D-A56AE51E4874}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

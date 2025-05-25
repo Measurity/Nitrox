@@ -8,9 +8,10 @@ namespace NitroxModel.Networking.Packets;
 [Serializable]
 public record SessionPolicy : Packet
 {
-    public SessionPolicy(SessionId sessionId, bool disableConsole, int maxConnections, bool requiresServerPassword)
+    public SessionPolicy(SessionId sessionId, byte[] publicKey, bool disableConsole, int maxConnections, bool requiresServerPassword)
     {
         SessionId = sessionId;
+        PublicKey = publicKey;
         RequiresServerPassword = requiresServerPassword;
         AuthenticationAuthority = MultiplayerSessionAuthenticationAuthority.SERVER;
         DisableConsole = disableConsole;
@@ -22,10 +23,11 @@ public record SessionPolicy : Packet
     }
 
     /// <remarks>Used for deserialization</remarks>
-    public SessionPolicy(SessionId sessionId, bool requiresServerPassword, MultiplayerSessionAuthenticationAuthority authenticationAuthority,
-                                    bool disableConsole, int maxConnections, NitroxVersion nitroxVersionAllowed)
+    public SessionPolicy(SessionId sessionId, byte[] publicKey, bool requiresServerPassword, MultiplayerSessionAuthenticationAuthority authenticationAuthority,
+                         bool disableConsole, int maxConnections, NitroxVersion nitroxVersionAllowed)
     {
         SessionId = sessionId;
+        PublicKey = publicKey;
         RequiresServerPassword = requiresServerPassword;
         AuthenticationAuthority = authenticationAuthority;
         DisableConsole = disableConsole;
@@ -38,6 +40,15 @@ public record SessionPolicy : Packet
     public bool DisableConsole { get; }
     public int MaxConnections { get; }
     public NitroxVersion NitroxVersionAllowed { get; }
+
+    /// <summary>
+    ///     Gets the public key that can be shared with clients.
+    /// </summary>
+    public byte[] PublicKey { get; private set; }
+
+    /// <summary>
+    ///     Gets the Session ID that the server uses for the client that receives this packet.
+    /// </summary>
     public SessionId SessionId { get; }
 
     public override string ToString()

@@ -1,5 +1,6 @@
 extern alias JB;
 global using NitroxModel.Logger;
+global using static NitroxModel.Extensions.ArrayExtensions;
 global using static NitroxClient.Helpers.NitroxEntityExtensions;
 using System;
 using System.IO;

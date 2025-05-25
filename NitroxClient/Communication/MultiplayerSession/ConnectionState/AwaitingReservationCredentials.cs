@@ -33,6 +33,9 @@ public class AwaitingReservationCredentials : ConnectionNegotiatingState
         PlayerSettings playerSettings = sessionConnectionContext.PlayerSettings;
         AuthenticationContext authenticationContext = sessionConnectionContext.AuthenticationContext;
 
+        // TODO: Check if we have any player login key for the known server public key.
+        // AsyncCrypto crypto = AsyncCrypto.Load(sessionConnectionContext.SessionPolicy.PublicKey);
+
         client.Send(new SessionReservationRequest(playerSettings, authenticationContext));
     }
 

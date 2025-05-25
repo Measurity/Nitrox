@@ -38,7 +38,7 @@ internal sealed class ServerStatusService([FromKeyedServices(typeof(ServerStatus
     public async Task StartedAsync(CancellationToken cancellationToken)
     {
         appStartStopWatch.Stop();
-        logger.ZLogInformation($"Server started in {Math.Round(appStartStopWatch.Elapsed.TotalSeconds, 3):@Seconds} seconds");
+        logger.ZLogInformation($"Server started in {double.Round(appStartStopWatch.Elapsed.TotalSeconds, 3):@Seconds} seconds");
 
         await LogIps(cancellationToken);
     }

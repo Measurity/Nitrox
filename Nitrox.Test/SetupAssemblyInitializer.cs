@@ -1,4 +1,3 @@
-global using Nitrox.Test.Helper;
 using NitroxModel.Core;
 using NitroxModel.Logger;
 

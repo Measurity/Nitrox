@@ -83,10 +83,7 @@ namespace NitroxClient.Communication.MultiplayerSession
         public void ProcessReservationResponsePacketShouldSetTheReservation()
         {
             // Arrange
-            SessionReservation successfulReservation = new SessionReservation(
-                TestConstants.TEST_CORRELATION_ID,
-                TestConstants.TEST_PLAYER_ID,
-                TestConstants.TEST_RESERVATION_KEY);
+            SessionReservation successfulReservation = new SessionReservation(TestConstants.TEST_RESERVATION_KEY);
 
             IClient client = Substitute.For<IClient>();
             IMultiplayerSession multiplayerSession = new MultiplayerSessionManager(client, TestConstants.TEST_CONNECTION_STATE);

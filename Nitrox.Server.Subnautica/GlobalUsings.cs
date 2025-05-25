@@ -1,3 +1,16 @@
+global using static NitroxModel.Extensions.KeyValueStoreExtensions;
+global using static NitroxModel.Extensions.DictionaryExtensions;
+global using static NitroxModel.Extensions.TaskExtensions;
+global using static NitroxModel.Extensions.UintExtensions;
+global using static NitroxModel.Extensions.ListExtensions;
+global using static NitroxModel.Extensions.ArrayExtensions;
+global using static NitroxModel.Extensions.EnumerableExtensions;
+global using static NitroxModel.Extensions.EnumExtensions;
+global using static NitroxModel.Extensions.ExceptionExtensions;
+global using static NitroxModel.Extensions.StreamExtensions;
+global using static NitroxModel.Extensions.StringExtensions;
+global using static NitroxModel.Extensions.TypeExtensions;
+global using static NitroxModel.Extensions.SubnauticaConfigExtensions;
 global using System.Threading.Tasks;
 global using NitroxModel;
 global using Microsoft.Extensions.Logging;

@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Nitrox.Server.Subnautica.Database;
-using Nitrox.Server.Subnautica.Database.Models;
 using Nitrox.Server.Subnautica.Models.Configuration;
 using Nitrox.Server.Subnautica.Models.Events;
 using Nitrox.Server.Subnautica.Models.Events.Core;
@@ -145,11 +144,7 @@ internal sealed class DatabaseService(IDbContextFactory<WorldDbContext> dbContex
                 await db.Database.EnsureCreatedAsync(cancellationToken);
             }
         }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             logger.ZLogError(ex, $"Something is blocking the SQLite database. Check that you do not have it open in your IDE or other database viewer.");
             throw;

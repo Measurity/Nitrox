@@ -40,7 +40,7 @@
     <PropertyGroup Condition="'$(NitroxLibrary)' == 'true' and '$(MSBuildProjectName)' != 'NitroxModel' and '$(MSBuildProjectName)' != 'Nitrox.Launcher' and '$(MSBuildProjectName)' != 'Nitrox.Server.Subnautica.Database'">
         <UnityModLibrary>true</UnityModLibrary>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Nitrox.Test'">
+    <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectName), '^Nitrox.*\.Test$'))">
         <TestLibrary>true</TestLibrary>
     </PropertyGroup>
     <PropertyGroup>

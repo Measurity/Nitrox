@@ -175,7 +175,7 @@ internal partial class NitroxZLoggerFormatter : IZLoggerFormatter
         foreach (IRedactor redactor in FormatterOptions.GetRedactorsByKey(key))
         {
             RedactResult result = redactor.Redact(key, value);
-            if (result.IsRedacted == false)
+            if (!result.IsRedacted)
             {
                 continue;
             }

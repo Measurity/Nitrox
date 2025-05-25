@@ -26,7 +26,7 @@ internal class PlayersCommand(IOptions<SubnauticaServerOptions> serverOptionsPro
             await context.ReplyAsync("There are no players");
             return;
         }
-        string playerNamesWithIds = string.Join(", ", players.OrderBy(p => p.Name).Select(p => $"{p.Name} (#{p.Id})"));
+        string playerNamesWithIds = string.Join(", ", players.OrderBy(p => p.Name).Select(p => $"ID {p.Id}, Session: #{p.SessionId}, Name: '{p.Name}'"));
         await context.ReplyAsync($"List of players ({players.Length}/{options.MaxConnections}):{Environment.NewLine}{playerNamesWithIds}");
     }
 }

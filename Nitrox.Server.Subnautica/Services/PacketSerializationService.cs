@@ -65,7 +65,7 @@ internal sealed class PacketSerializationService : BackgroundService
         }, stoppingToken).ContinueWithHandleError(exception => logger.ZLogCritical(exception, $"Failed to initialize packet serializer"));
     }
 
-    private class UnloadedSerializer(TaskCompletionSource init, Action<IPacketSerializer> replacer) : IPacketSerializer
+    private class UnloadedSerializer(TaskCompletionSource init, Action<IPacketSerializer> implementationSwapper) : IPacketSerializer
     {
         public void SerializeInto(Packet packet, Stream stream)
         {
@@ -74,7 +74,7 @@ internal sealed class PacketSerializationService : BackgroundService
                 init.Task.Wait(TimeSpan.FromSeconds(10));
             }
             packet.SerializeInto(stream);
-            replacer(new LoadedSerializer());
+            implementationSwapper(new LoadedSerializer());
         }
     }
 

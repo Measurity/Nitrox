@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net9.0;net472</TargetFrameworks>
+        <IsTestProject>true</IsTestProject>
+        <IsPublishable>false</IsPublishable>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>NitroxModel</RootNamespace> <!-- TODO: Change to Nitrox.Model when NitroxModel project renamed also. -->
+        <!-- TODO: Do not use DI in tests, create objects in-line or use mocks for externalities -->
+        <NoWarn>$(NoWarn);DIMA001</NoWarn>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="MSTest" />
+        <PackageReference Include="FluentAssertions"  />
+        <PackageReference Include="FluentAssertions.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="CompareNETObjects" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\NitroxModel\NitroxModel.csproj" />
+        <ProjectReference Include="..\TestHelper\TestHelper.csproj" />
+    </ItemGroup>
+</Project>

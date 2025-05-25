@@ -13,7 +13,7 @@ namespace NitroxClient.Communication.MultiplayerSession.ConnectionState
         {
             // Arrange
             IMultiplayerSessionConnectionContext connectionContext = Substitute.For<IMultiplayerSessionConnectionContext>();
-            connectionContext.SessionPolicy.Returns(new SessionPolicy(1, false, TestConstants.TEST_MAX_PLAYER_CONNECTIONS, false));
+            connectionContext.SessionPolicy.Returns(new SessionPolicy(1, [], false, TestConstants.TEST_MAX_PLAYER_CONNECTIONS, false));
 
             EstablishingSessionPolicy connectionState = new EstablishingSessionPolicy();
 
@@ -29,7 +29,7 @@ namespace NitroxClient.Communication.MultiplayerSession.ConnectionState
         {
             // Arrange
             IMultiplayerSessionConnectionContext connectionContext = Substitute.For<IMultiplayerSessionConnectionContext>();
-            connectionContext.SessionPolicy.Returns(new SessionPolicy(1, false, TestConstants.TEST_MAX_PLAYER_CONNECTIONS, true));
+            connectionContext.SessionPolicy.Returns(new SessionPolicy(1, [], false, TestConstants.TEST_MAX_PLAYER_CONNECTIONS, true));
 
             EstablishingSessionPolicy connectionState = new EstablishingSessionPolicy();
 

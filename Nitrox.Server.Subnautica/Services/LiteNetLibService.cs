@@ -29,16 +29,17 @@ namespace Nitrox.Server.Subnautica.Services;
 ///     Opens the LiteNetLib channel and starts sending incoming messages to <see cref="packetRegistryService" /> for
 ///     processing.
 /// </summary>
-internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeSessionDisconnected, ISeeSessionCreated, IKickPlayer
+internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeSessionDisconnected, IKickPlayer
 {
     private readonly NetDataWriter dataWriter = new();
     private readonly IHostEnvironment hostEnvironment;
+    private readonly ServerIdService serverIdService;
     private readonly EventBasedNetListener listener;
     private readonly ILogger<LiteNetLibService> logger;
     private readonly IOptions<SubnauticaServerOptions> optionsProvider;
     private readonly PacketRegistryService packetRegistryService;
     private readonly PacketSerializationService packetSerializationService;
-    private readonly ConcurrentDictionary<SessionId, NetPeer> peersBySessionId = [];
+    private readonly ConcurrentDictionary<SessionId, PeerContext> contextBySessionId = [];
     private readonly NetManager server;
     private readonly ITrigger<ISeeSessionCreated, Session> sessionCreatedTrigger;
     private readonly SessionRepository sessionRepository;
@@ -46,12 +47,13 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
     public int EventPriority => -100;
 
     public LiteNetLibService(PacketRegistryService packetRegistryService, PacketSerializationService packetSerializationService, SessionRepository sessionRepository, ITrigger<ISeeSessionCreated, Session> sessionCreatedTrigger,
-                             IHostEnvironment hostEnvironment, IOptions<SubnauticaServerOptions> optionsProvider, ILogger<LiteNetLibService> logger)
+                             IHostEnvironment hostEnvironment, ServerIdService serverIdService, IOptions<SubnauticaServerOptions> optionsProvider, ILogger<LiteNetLibService> logger)
     {
         this.packetRegistryService = packetRegistryService;
         this.packetSerializationService = packetSerializationService;
         this.optionsProvider = optionsProvider;
         this.hostEnvironment = hostEnvironment;
+        this.serverIdService = serverIdService;
         this.sessionRepository = sessionRepository;
         this.sessionCreatedTrigger = sessionCreatedTrigger;
         this.logger = logger;
@@ -61,70 +63,74 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
 
     public async Task<bool> KickPlayer(SessionId sessionId, string reason = "")
     {
-        if (!peersBySessionId.TryGetValue(sessionId, out NetPeer peer))
+        if (!contextBySessionId.TryGetValue(sessionId, out PeerContext context))
         {
             return false;
         }
         await SendPacket(new PlayerKicked(reason), sessionId);
-        server.DisconnectPeer(peer); // This will trigger client disconnect, which will clear the session data.
+        server.DisconnectPeer(context.Peer); // This will trigger client disconnect, which will clear the session data.
         return true;
     }
 
     public ValueTask SendPacket<T>(T packet, SessionId sessionId) where T : Packet
     {
-        if (!peersBySessionId.TryGetValue(sessionId, out NetPeer peer) || peer.ConnectionState != ConnectionState.Connected)
+        if (!contextBySessionId.TryGetValue(sessionId, out PeerContext context))
         {
-            logger.ZLogWarning($"Cannot send packet {packet?.GetType().Name:@TypeName} to closed connection {(peer as IPEndPoint).ToSensitive():@EndPoint} with session id {sessionId}");
             return ValueTask.CompletedTask;
         }
-        SendPacket(packet, peer);
+        if (context.Peer.ConnectionState != ConnectionState.Connected)
+        {
+            logger.ZLogWarning($"Cannot send packet {packet?.GetType().Name:@TypeName} to closed connection {(context.Peer as IPEndPoint).ToSensitive():@EndPoint} with session id {sessionId}");
+            return ValueTask.CompletedTask;
+        }
+        SendPacket(packet, context.Peer);
         return ValueTask.CompletedTask;
     }
 
     public ValueTask SendPacketToAll<T>(T packet) where T : Packet
     {
-        foreach (KeyValuePair<SessionId, NetPeer> pair in peersBySessionId)
+        foreach (KeyValuePair<SessionId, PeerContext> pair in contextBySessionId)
         {
-            SendPacket(packet, pair.Value);
+            SendPacket(packet, pair.Value.Peer);
         }
         return ValueTask.CompletedTask;
     }
 
     public ValueTask SendPacketToOthers<T>(T packet, SessionId excludedSessionId) where T : Packet
     {
-        foreach (KeyValuePair<SessionId, NetPeer> pair in peersBySessionId)
+        foreach (KeyValuePair<SessionId, PeerContext> pair in contextBySessionId)
         {
             if (pair.Key == excludedSessionId)
             {
                 continue;
             }
-            SendPacket(packet, pair.Value);
+            SendPacket(packet, pair.Value.Peer);
         }
         return ValueTask.CompletedTask;
     }
 
     public ValueTask HandleSessionDisconnect(Session disconnectedSession)
     {
-        if (!peersBySessionId.TryRemove(disconnectedSession.Id, out NetPeer peer))
+        if (!contextBySessionId.TryRemove(disconnectedSession.Id, out PeerContext context))
         {
             return ValueTask.CompletedTask;
         }
         if (disconnectedSession is { Player.Id: var playerId, Player.Name: { } playerName })
         {
-            logger.ZLogInformation($"Player {playerName:@PlayerName} #{playerId:@PlayerId} on {(peer as EndPoint).ToSensitive():@EndPoint} disconnected");
+            logger.ZLogInformation($"Player {playerName:@PlayerName} #{playerId:@PlayerId} on {(context.Peer as EndPoint).ToSensitive():@EndPoint} disconnected");
         }
         else
         {
-            logger.ZLogInformation($"Session #{disconnectedSession.Id:@SessionId} on {(peer as EndPoint).ToSensitive():@EndPoint} disconnected");
+            logger.ZLogInformation($"Session #{disconnectedSession.Id:@SessionId} on {(context.Peer as EndPoint).ToSensitive():@EndPoint} disconnected");
         }
         Disconnect disconnectPacket = new(disconnectedSession.Id);
-        foreach (KeyValuePair<SessionId, NetPeer> pair in peersBySessionId)
+        foreach (KeyValuePair<SessionId, PeerContext> pair in contextBySessionId)
         {
             if (pair.Key == disconnectedSession.Id)
             {
                 continue;
             }
-            SendPacket(disconnectPacket, pair.Value);
+            SendPacket(disconnectPacket, pair.Value.Peer);
         }
         return ValueTask.CompletedTask;
     }
@@ -161,9 +167,9 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
         catch (OperationCanceledException)
         {
             ServerStopped serverStopped = new();
-            foreach (NetPeer peer in peersBySessionId.Values)
+            foreach (PeerContext context in contextBySessionId.Values)
             {
-                SendPacket(serverStopped, peer);
+                SendPacket(serverStopped, context.Peer);
             }
             await Task.Delay(500, CancellationToken.None); // TODO: Need async function to wait for all packets to be sent away.
             logger.LogDebug("Waiting for LiteNetLib to stop...");
@@ -185,12 +191,12 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
             return;
         }
 
-        if (!taskChannel.Writer.TryWrite(ProcessConnectionRequestAsync(sessionRepository, request, peersBySessionId, sessionCreatedTrigger)))
+        if (!taskChannel.Writer.TryWrite(ProcessConnectionRequestAsync(sessionRepository, request, contextBySessionId, sessionCreatedTrigger)))
         {
             logger.ZLogWarning($"Failed to queue client connect request task for {request.RemoteEndPoint.ToSensitive():@EndPoint}");
         }
 
-        static async Task ProcessConnectionRequestAsync(SessionRepository sessionRepository, ConnectionRequest request, ConcurrentDictionary<SessionId, NetPeer> peersBySessionId, ITrigger<ISeeSessionCreated, Session> sessionCreatedTrigger)
+        static async Task ProcessConnectionRequestAsync(SessionRepository sessionRepository, ConnectionRequest request, ConcurrentDictionary<SessionId, PeerContext> contextsBySessionId, ITrigger<ISeeSessionCreated, Session> sessionCreatedTrigger)
         {
             Session session = await sessionRepository.GetOrCreateSessionAsync(request.RemoteEndPoint.Address.ToString(), (ushort)request.RemoteEndPoint.Port);
             if (session == null)
@@ -199,7 +205,7 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
                 request.Reject();
                 return;
             }
-            peersBySessionId.TryAdd(session.Id, request.Accept());
+            contextsBySessionId.TryAdd(session.Id, new PeerContext(request.Accept(), ""));
             await sessionCreatedTrigger.Trigger(session);
         }
     }
@@ -207,9 +213,9 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
     private void ClientDisconnected(NetPeer peer)
     {
         SessionId? sessionId = null;
-        foreach (KeyValuePair<SessionId, NetPeer> pair in peersBySessionId)
+        foreach (KeyValuePair<SessionId, PeerContext> pair in contextBySessionId)
         {
-            if (pair.Value.Id == peer.Id)
+            if (pair.Value.Peer.Id == peer.Id)
             {
                 sessionId = pair.Key;
             }
@@ -249,7 +255,6 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
 
     private async Task ProcessPacket(NetPeer peer, Packet packet)
     {
-        // TODO: See if further optimization is possible.
         Session session = await sessionRepository.GetOrCreateSessionAsync(peer.Address.ToString(), (ushort)peer.Port);
         Type packetType = packet.GetType();
         logger.ZLogTrace($"Incoming packet {packetType.Name:@TypeName} by session #{session.Id:@SessionId}");
@@ -349,8 +354,5 @@ internal class LiteNetLibService : BackgroundService, IServerPacketSender, ISeeS
         AUTHENTICATED
     }
 
-    public ValueTask HandleSessionCreated(Session createdSession)
-    {
-        return ValueTask.CompletedTask;
-    }
+    private record PeerContext(NetPeer Peer, string EncryptionKey); // TODO: DO SOMETHING USEFUL WITH ENCRYPTION HERE!
 }

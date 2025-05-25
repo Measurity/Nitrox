@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Nitrox.Server.Subnautica.Models.Configuration;
 using Nitrox.Server.Subnautica.Models.Packets.Processors.Core;
 using Nitrox.Server.Subnautica.Models.Respositories;
+using Nitrox.Server.Subnautica.Services;
 using NitroxModel.Helper;
 using NitroxModel.Networking.Packets;
 using NitroxModel.Networking.Session;
@@ -13,20 +14,20 @@ namespace Nitrox.Server.Subnautica.Models.Packets.Processors.Workflows;
 /// <summary>
 ///     This handles packets related to the game join process.
 /// </summary>
-internal sealed class JoinWorkflow(SessionRepository sessionRepository, IOptionsMonitor<SubnauticaServerOptions> optionsProvider, ILogger<JoinWorkflow> logger) :
+internal sealed class JoinWorkflow(SessionRepository sessionRepository, ServerIdService serverIdService, IOptionsMonitor<SubnauticaServerOptions> optionsProvider, ILogger<JoinWorkflow> logger) :
     IAnonPacketProcessor<SessionPolicyRequest>,
     IAnonPacketProcessor<SessionReservationRequest>
 {
     private readonly ILogger<JoinWorkflow> logger = logger;
     private readonly IOptionsMonitor<SubnauticaServerOptions> optionsProvider = optionsProvider;
     private readonly SessionRepository sessionRepository = sessionRepository;
+    private readonly ServerIdService serverIdService = serverIdService;
 
     public async Task Process(AnonProcessorContext context, SessionPolicyRequest packet)
     {
         logger.ZLogInformation($"Providing join policies to session #{context.Sender:@SessionId}...");
         SubnauticaServerOptions options = optionsProvider.CurrentValue;
-        // TODO: Provide a server ID that is globally unique for clients to identify which server they speak to.
-        await context.ReplyToSender(new SessionPolicy(context.Sender, options.DisableConsole, options.MaxConnections, options.IsPasswordRequired()));
+        await context.ReplyToSender(new SessionPolicy(context.Sender, serverIdService.PublicKey, options.DisableConsole, options.MaxConnections, options.IsPasswordRequired()));
     }
 
     public async Task Process(AnonProcessorContext context, SessionReservationRequest packet)
