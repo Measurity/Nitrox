@@ -6,7 +6,7 @@ using Nitrox.Server.Subnautica.Services;
 
 namespace Nitrox.Server.Subnautica.Models.GameLogic;
 
-internal sealed class SleepManager(IPacketSender packetSender, PlayerManager playerManager, TimeService timeService) : ISessionCleaner
+internal sealed class SleepManager(IPacketSender packetSender, PlayerService playerService, TimeService timeService) : ISessionCleaner
 {
     /// <summary>Duration of the sleep animation/screen fade in seconds.</summary>
     private const float SLEEP_DURATION = 5f;
@@ -17,11 +17,11 @@ internal sealed class SleepManager(IPacketSender packetSender, PlayerManager pla
     private readonly TimeService timeService = timeService;
     private readonly ThreadSafeSet<SessionId> sessionIdsInBed = [];
     private bool isSleepInProgress;
-    private readonly PlayerManager playerManager = playerManager;
+    private readonly PlayerService playerService = playerService;
 
-    public async Task PlayerEnteredBed(Player player)
+    public async Task PlayerEnteredBed(SessionId player)
     {
-        if (!sessionIdsInBed.Add(player.SessionId))
+        if (!sessionIdsInBed.Add(player))
         {
             return;
         }
@@ -33,9 +33,9 @@ internal sealed class SleepManager(IPacketSender packetSender, PlayerManager pla
         }
     }
 
-    public async Task PlayerExitedBed(Player player)
+    public async Task PlayerExitedBed(SessionId player)
     {
-        if (!sessionIdsInBed.Remove(player.SessionId))
+        if (!sessionIdsInBed.Remove(player))
         {
             return;
         }
@@ -45,13 +45,13 @@ internal sealed class SleepManager(IPacketSender packetSender, PlayerManager pla
 
     private bool AreAllPlayersInBed()
     {
-        int totalPlayers = playerManager.GetConnectedPlayers().Count;
+        int totalPlayers = playerService.ConnectedPlayerCount;
         return totalPlayers > 0 && sessionIdsInBed.Count >= totalPlayers;
     }
 
     private async Task BroadcastStatus()
     {
-        int totalPlayers = playerManager.GetConnectedPlayers().Count;
+        int totalPlayers = playerService.ConnectedPlayerCount;
         await packetSender.SendPacketToAllAsync(new SleepStatusUpdate(sessionIdsInBed.Count, totalPlayers));
     }
 
