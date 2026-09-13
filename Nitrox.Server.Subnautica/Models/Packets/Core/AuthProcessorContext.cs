@@ -24,4 +24,6 @@ internal record AuthProcessorContext : IPacketProcessContext<Player>
     public async Task SendToAllAsync<T>(T packet) where T : Packet => await packetSender.SendPacketToAllAsync(packet);
 
     public async Task SendToOthersAsync<T>(T packet) where T : Packet => await packetSender.SendPacketToOthersAsync(packet, Sender.SessionId);
+
+    public override string ToString() => $"'{Sender.Name}' #{Sender.SessionId}";
 }

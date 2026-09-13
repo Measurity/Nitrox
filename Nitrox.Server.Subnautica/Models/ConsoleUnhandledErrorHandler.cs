@@ -5,7 +5,7 @@ using Nitrox.Model.Platforms.OS.Shared;
 
 namespace Nitrox.Server.Subnautica.Models;
 
-static class ConsoleUnhandledErrorHandler
+internal static class ConsoleUnhandledErrorHandler
 {
     public static void Attach()
     {

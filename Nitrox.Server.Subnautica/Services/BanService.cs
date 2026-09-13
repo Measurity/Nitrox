@@ -6,18 +6,20 @@ using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
 using Nitrox.Model.DataStructures;
+using Nitrox.Server.Subnautica.Models.Administration;
 using Nitrox.Server.Subnautica.Models.AppEvents;
 using Nitrox.Server.Subnautica.Models.AppEvents.Core;
 using Nitrox.Server.Subnautica.Models.Serialization;
-using Nitrox.Server.Subnautica.Models.Serialization.World;
 
 namespace Nitrox.Server.Subnautica.Services;
 
 /// <summary>
-///     Tracks IP bans. Keeps its own save file (independent from <see cref="WorldService" />'s
-///     save/load cycle) so that old saves created before this feature existed keep loading fine.
+///     Enables persisted IP bans.
 /// </summary>
-internal sealed class BanService(ServerJsonSerializer serializer, IOptions<ServerStartOptions> startOptions, ILogger<BanService> logger) : BackgroundService, ISaveState
+/// <remarks>
+///     Keeps its own save file so that old saves created before this feature existed keep loading fine.
+/// </remarks>
+internal sealed class BanService(ServerJsonSerializer serializer, IOptions<ServerStartOptions> startOptions, ILogger<BanService> logger) : BackgroundService, ISaveState, IBan
 {
     private readonly ThreadSafeDictionary<IPAddress, BanEntry> bansByIp = [];
     private readonly SemaphoreSlim expiryReschedule = new(0, 1);
@@ -38,19 +40,12 @@ internal sealed class BanService(ServerJsonSerializer serializer, IOptions<Serve
         await base.StartAsync(cancellationToken);
     }
 
-    /// <summary>
-    ///     Returns whether the given IP address currently has an active (non-expired) ban.
-    /// </summary>
     public bool IsBanned(IPAddress ip)
     {
         loaded.Task.GetAwaiter().GetResult();
         return bansByIp.TryGetValue(ip, out BanEntry? entry) && !entry.IsExpired;
     }
 
-    /// <summary>
-    ///     Returns extra detail to show a banned player (the ban reason and, for a temporary ban, when it expires),
-    ///     or <see langword="null" /> when the IP has no active ban.
-    /// </summary>
     public string? GetBanRejectionDetail(IPAddress ip)
     {
         loaded.Task.GetAwaiter().GetResult();
@@ -81,11 +76,7 @@ internal sealed class BanService(ServerJsonSerializer serializer, IOptions<Serve
         return writer.ToString();
     }
 
-    /// <summary>
-    ///     Bans an IP address. The player name (if any) is only kept as a label for <c>banlist</c>; enforcement is purely
-    ///     by IP so a rename or a different account behind the same IP stays banned.
-    /// </summary>
-    public async Task BanAsync(IPAddress ip, string? playerName, string? reason, string bannedBy, TimeSpan duration)
+    public async Task BanAsync(IPAddress ip, TimeSpan duration, string bannedBy, string? reason, string? playerName)
     {
         await loaded.Task;
 
@@ -127,11 +118,11 @@ internal sealed class BanService(ServerJsonSerializer serializer, IOptions<Serve
         {
             RemoveExpiredBans();
 
-            TimeSpan delay = TimeSpan.FromHours(1);
             DateTimeOffset[] expiredBans = bansByIp.Values
                                                    .Where(entry => entry.ExpiresAtUtc.HasValue)
                                                    .Select(entry => entry.ExpiresAtUtc.Value)
                                                    .ToArray();
+            TimeSpan delay = TimeSpan.FromHours(1);
             if (expiredBans.Length > 0)
             {
                 TimeSpan untilNextExpiry = expiredBans.Min() - DateTimeOffset.UtcNow;

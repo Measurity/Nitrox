@@ -42,11 +42,11 @@ internal sealed class DefaultServerPacketProcessor(ILogger<DefaultServerPacketPr
         Type packetType = packet.GetType();
         if (!loggingPacketBlackList.Contains(packetType))
         {
-            logger.ZLogDebug($"Using default packet processor for: {packet} and player #{context.Sender.SessionId}");
+            logger.ZLogDebug($"Transmitting data from player {context}: {packet}");
         }
         if (defaultPacketProcessorBlacklist.Contains(packetType))
         {
-            logger.ZLogErrorOnce($"Player {context.Sender.Name} #{context.Sender.SessionId} sent a packet which is blacklisted by the server. It's likely that the said player is using a modified version of Nitrox and action could be taken accordingly.");
+            logger.ZLogErrorOnce($"Player {context} sent a packet which is blacklisted by the server. It's likely that the said player is using a modified version of Nitrox and action could be taken accordingly.");
             return;
         }
 

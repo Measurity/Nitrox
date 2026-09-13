@@ -36,7 +36,7 @@ internal static partial class ServiceCollectionExtensions
     internal static partial IServiceCollection AddRedactors(this IServiceCollection services);
 
     /// <summary>
-    ///     Adds an interface -> service mapping that for handling administrative actions.
+    ///     Adds an interface -> service mapping for handling administrative actions.
     /// </summary>
     /// <remarks>
     ///     If multiple instances of the same interface type are registered, then the last registered implementation will be used.
@@ -162,7 +162,6 @@ internal static partial class ServiceCollectionExtensions
                     .AddSingleton<JoiningManager>()
                     .AddSingleton<BuildingManager>()
                     .AddSingleton<PlayerManager>()
-                    .AddSingleton<SessionManager>()
                     .AddSingleton<SleepManager>()
                     .AddSingleton<StoryManager>()
                     .AddSingleton<StoryScheduler>()

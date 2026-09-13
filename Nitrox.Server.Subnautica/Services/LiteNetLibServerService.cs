@@ -32,17 +32,17 @@ internal sealed class LiteNetLibServerService : IHostedService, IPacketSender, I
     private readonly PlayerManager playerManager;
     private readonly NetManager server;
     private readonly SessionManager sessionManager;
-    private readonly TaskQueueService taskQueueService;
+    private readonly TaskTrackingService taskTrackingService;
 
     public LiteNetLibServerService(PlayerManager playerManager, SessionManager sessionManager, PacketSerializationService packetSerializationService, PacketRegistryService packetRegistryService, IOptions<SubnauticaServerOptions> options,
-                                   TaskQueueService taskQueueService, ILogger<LiteNetLibServerService> logger)
+                                   TaskTrackingService taskTrackingService, ILogger<LiteNetLibServerService> logger)
     {
         this.playerManager = playerManager;
         this.sessionManager = sessionManager;
         this.packetSerializationService = packetSerializationService;
         this.packetRegistryService = packetRegistryService;
         this.options = options;
-        this.taskQueueService = taskQueueService;
+        this.taskTrackingService = taskTrackingService;
         this.logger = logger;
         listener = new EventBasedNetListener();
         server = new NetManager(listener, NitroxEnvironment.IsReleaseMode ? new Crc32cLayer() : null)
@@ -221,7 +221,7 @@ internal sealed class LiteNetLibServerService : IHostedService, IPacketSender, I
             return;
         }
 
-        if (!taskQueueService.TryQueue(sessionManager.RemoveSessionAsync(context.SessionId)))
+        if (!taskTrackingService.TryTrack(sessionManager.RemoveSessionAsync(context.SessionId)))
         {
             logger.ZLogWarning($"Failed to queue client disconnect task for {peer as EndPoint:@EndPoint}");
         }
@@ -249,7 +249,7 @@ internal sealed class LiteNetLibServerService : IHostedService, IPacketSender, I
                 return;
             }
 
-            if (!taskQueueService.TryQueue(ProcessPacket(context, packet)))
+            if (!taskTrackingService.TryTrack(ProcessPacket(context, packet)))
             {
                 logger.ZLogError($"Failed to queue packet processor task for packet type {packet.GetType().Name:@TypeName} from {peer.Address:@Address}:{peer.Port:@Port}");
             }

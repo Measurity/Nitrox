@@ -18,7 +18,7 @@ using Nitrox.Server.Subnautica.Services;
 
 namespace Nitrox.Server.Subnautica.Models.Serialization.World;
 
-internal class WorldService : IHostedService
+internal sealed class WorldService : IHostedService
 {
     private readonly BatchEntitySpawner batchEntitySpawner;
     private readonly EntityRegistry entityRegistry;
@@ -140,12 +140,6 @@ internal class WorldService : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
-    }
-
-    internal void UpdateSerializer(IServerSerializer serverSerializer)
-    {
-        Validate.NotNull(serverSerializer, "Serializer cannot be null");
-        Serializer = serverSerializer;
     }
 
     internal bool Save(PersistedWorldData persistedData, string saveDir)
